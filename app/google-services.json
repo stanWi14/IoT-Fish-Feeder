@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "789500190026",
+    "project_id": "fish-feeder-9341e",
+    "storage_bucket": "fish-feeder-9341e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789500190026:android:fb8929eb3dd5b87bcdf5b3",
+        "android_client_info": {
+          "package_name": "com.example.fishfeeder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789500190026-0fg52nb8mc1fdq9i9i9jmtj47cjcna7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fishfeeder",
+            "certificate_hash": "a95540c1e662f1fc812c80424e9c3ac9c76b78af"
+          }
+        },
+        {
+          "client_id": "789500190026-er6s4qia2papgriv9343q47ngu1g2rqt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDReoy6uwXV2Z3kM76DEQaldj5y1Aruoag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789500190026-er6s4qia2papgriv9343q47ngu1g2rqt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
