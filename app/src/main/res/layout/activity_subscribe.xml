@@ -62,7 +62,7 @@
         app:layout_constraintTop_toBottomOf="@+id/etAddDevTitle" />
 
     <EditText
-        android:id="@+id/etAddId"
+        android:id="@+id/etAddDevId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -80,7 +80,7 @@
         android:text="Device Password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etAddId" />
+        app:layout_constraintTop_toBottomOf="@+id/etAddDevId" />
 
     <EditText
         android:id="@+id/etAddDevPass"

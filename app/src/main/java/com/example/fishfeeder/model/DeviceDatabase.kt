@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Database(entities = [Device::class], version = 1)
 abstract class DeviceDatabase : RoomDatabase() {
@@ -28,7 +27,7 @@ abstract class DeviceDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     DeviceDatabase::class.java,
-                    "device_database"
+                    "table_device"
                 )
                     .addCallback(DeviceDatabaseCallback(scope))
                     .build()

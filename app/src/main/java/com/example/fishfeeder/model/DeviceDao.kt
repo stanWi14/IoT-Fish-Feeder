@@ -14,9 +14,6 @@ interface DeviceDao {
     @Delete
     fun delete(device: Device)
 
-//    @Query("DELETE FROM device_table")
-//    suspend fun deleteAllDevice()
-
-    @Query("SELECT * FROM device_table")
+    @Query("SELECT * FROM table_device")
     fun getAllDevice(): Flow<List<Device>>
 }
