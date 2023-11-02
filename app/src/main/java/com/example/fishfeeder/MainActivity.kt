@@ -6,13 +6,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.fishfeeder.databinding.ActivityMainBinding
 import com.example.fishfeeder.databinding.DialogAddDeviceBinding
+import com.example.fishfeeder.model.DeviceApplication
 import com.google.firebase.auth.FirebaseAuth
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     var isLogin: Boolean = false
+    lateinit var deviceViewModel: DeviceViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -22,13 +31,27 @@ class MainActivity : AppCompatActivity() {
         if (!isLogin) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
+            return
         }
         val currentUser = FirebaseAuth.getInstance().currentUser?.uid
-        binding.txtSubTitle.setText(currentUser.toString())
+
+
+        //Device list part
+        val recyclerView: RecyclerView = binding.rvListDevice
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val devAdapter = DeviceAdapter(this)
+        recyclerView.adapter = devAdapter
+        val viewModelFactory = DeviceViewModelFactory((application as DeviceApplication).repository)
+        deviceViewModel = ViewModelProvider(this, viewModelFactory).get(DeviceViewModel::class.java)
+        deviceViewModel.myDevices.observe(this, Observer { devices ->
+            //update UI
+            devAdapter.setDevice(devices)
+        })
 
         binding.txtSubTitle.setOnClickListener() {
-            logout()
         }
+
         binding.btnAddDevice.setOnClickListener() {
             showCustomDialog()
         }

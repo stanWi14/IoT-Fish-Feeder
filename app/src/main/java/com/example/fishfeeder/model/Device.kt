@@ -6,12 +6,12 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "table_device")
 data class Device(
     val devID: String,
-    val titleDev: String,
-    val beforeFeedVol: Double?,
-    val afterFeedVol: Double?,
-    val lastFeedTimeStamp: String,
-    val allowNotif: Boolean,
+    var titleDev: String,
+    var beforeFeedVol: Double?,
+    var afterFeedVol: Double?,
+    var lastFeedTimeStamp: String,
+    var allowNotif: Boolean,
 ) {
-    @PrimaryKey()
+    @PrimaryKey(autoGenerate = true)
     var devNum = 0
 }

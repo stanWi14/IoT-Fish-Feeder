@@ -75,6 +75,6 @@ class SubscribeActivity : AppCompatActivity() {
     private fun addDeviceToDatabase(dev: Device) {
         deviceViewModel.insert(dev)
         Toast.makeText(applicationContext, "Device Added", Toast.LENGTH_LONG).show()
-
+        finish() // Close the activity after adding the device
     }
 }
