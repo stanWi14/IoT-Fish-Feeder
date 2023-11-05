@@ -11,7 +11,8 @@ data class Device(
     var afterFeedVol: Double?,
     var lastFeedTimeStamp: String,
     var allowNotif: Boolean,
+    var isOwner: Boolean
 ) {
     @PrimaryKey(autoGenerate = true)
-    var devNum = 0
+    var devNum: Int = 0
 }

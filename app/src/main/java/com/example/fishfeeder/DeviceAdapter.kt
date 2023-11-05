@@ -14,9 +14,6 @@ class DeviceAdapter(
 ) :
     RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
     var devices: List<Device> = ArrayList()
-//    val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-//    val editor = sharedPreferences.edit()
-
 
     class DeviceViewHolder(devView: View) : RecyclerView.ViewHolder(devView) {
         val containerClose: LinearLayout = devView.findViewById(R.id.closeCardBox)
@@ -46,11 +43,15 @@ class DeviceAdapter(
             holder.conteinerOpen.visibility = View.VISIBLE
         }
         holder.btnEditDev.setOnClickListener() {
-            val context = holder.itemView.context // Get the context from the item view
-            val intent = Intent(context, EditActivity::class.java)
-//            val devId = currentDev.devID // Replace this with your actual data
-//            intent.putExtra("DevID", devId)
-            context.startActivity(intent)
+            val intent = Intent(activity, EditActivity::class.java)
+            val devNum = currentDev.devNum // Replace this with your actual data
+//            intent.putExtra("DevNum", devNum.toString())      // later implement this, to read all the data
+            //sementara pake ini dulu parsing 1 by 1
+            intent.putExtra("DevId", currentDev.devID)
+            intent.putExtra("DevTitle", currentDev.titleDev)
+            intent.putExtra("DevAN", currentDev.allowNotif)
+            intent.putExtra("UserStat", currentDev.isOwner)
+            activity.startActivity(intent)
         }
         holder.txtValueFoodVolume.text = currentDev.afterFeedVol.toString()
         holder.percentBarFoodVolume.setProgress(currentDev.afterFeedVol?.toInt() ?: 0)

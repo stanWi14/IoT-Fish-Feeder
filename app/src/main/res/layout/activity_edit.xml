@@ -120,7 +120,8 @@
                 android:id="@+id/btnAddSchedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Schedule" />
+                android:text="Add Schedule"
+                android:visibility="gone" />
         </LinearLayout>
 
 
@@ -129,10 +130,12 @@
             android:layout_height="match_parent" />
 
         <LinearLayout
+            android:id="@+id/layoutAdvanceSet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/txtAdvanceSet"

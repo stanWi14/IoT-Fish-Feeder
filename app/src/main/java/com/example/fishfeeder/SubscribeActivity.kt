@@ -68,7 +68,7 @@ class SubscribeActivity : AppCompatActivity() {
     fun addDevice() {
         val devTitle = binding.etAddDevTitle.text.toString()
         // save device to local storage room
-        val dev = Device(devID, devTitle, beforeFeedVol, afterFeedVol, "not yet feed", false)
+        val dev = Device(devID, devTitle, beforeFeedVol, afterFeedVol, "not yet feed", false, false)
         addDeviceToDatabase(dev)
     }
 
