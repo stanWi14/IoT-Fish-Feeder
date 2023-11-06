@@ -32,6 +32,9 @@ class ScheduleAdapter(
     }
 
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
+        if (activity.userStatus) {
+            holder.btnDelSchedule.visibility = View.VISIBLE
+        }
         val currentFormat = data[position]
         val hour = currentFormat.substring(0, 2).toInt()
         val minute = if (currentFormat.length >= 4) currentFormat.substring(2, 4).toInt() else 0

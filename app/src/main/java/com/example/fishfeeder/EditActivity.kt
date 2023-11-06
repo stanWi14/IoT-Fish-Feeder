@@ -27,6 +27,9 @@ class EditActivity : AppCompatActivity() {
     var satArray = mutableListOf<String>()
     var sunArray = mutableListOf<String>()
     lateinit var devId: String
+    lateinit var devTitle: String
+    var devANotifVal: Boolean = false
+    var userStatus: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +37,9 @@ class EditActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         devId = intent.getStringExtra("DevId").toString()
-        val devTitle = intent.getStringExtra("DevTitle")
-        val devANotifVal = intent.getBooleanExtra("DevAN", false)
-        val userStatus = intent.getBooleanExtra("UserStat", false)
+        devTitle = intent.getStringExtra("DevTitle").toString()
+        devANotifVal = intent.getBooleanExtra("DevAN", false)
+        userStatus = intent.getBooleanExtra("UserStat", false)
 
         //TO DO this later we need to read all ( Maybe need )
 //        val devNum = intent.getStringExtra("DevNum")
