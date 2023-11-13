@@ -21,6 +21,7 @@ class DeviceAdapter(
         val smallDrop: ImageView = devView.findViewById(R.id.iconSmallDrop)
 
         val conteinerOpen: LinearLayout = devView.findViewById(R.id.openContainerCard)
+        val closeCardBox: LinearLayout = devView.findViewById(R.id.closeCardBox)
         val textTitle: TextView = devView.findViewById(R.id.txtTitleCard)
         val txtValueFoodVolume: TextView = devView.findViewById(R.id.txtValueFoodVolume)
         val percentBarFoodVolume: ProgressBar = devView.findViewById(R.id.percentBarFoodVolume)
@@ -38,9 +39,15 @@ class DeviceAdapter(
 
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val currentDev: Device = devices[position]
-        holder.smallDrop.setOnClickListener() {
-            holder.containerClose.visibility = View.GONE
+        holder.closeCardBox.setOnClickListener() {
+            holder.closeCardBox.visibility = View.GONE
             holder.conteinerOpen.visibility = View.VISIBLE
+            //Need to read firestore
+        }
+
+        holder.conteinerOpen.setOnClickListener() {
+            holder.closeCardBox.visibility = View.VISIBLE
+            holder.conteinerOpen.visibility = View.GONE
         }
         holder.btnEditDev.setOnClickListener() {
             val intent = Intent(activity, EditActivity::class.java)
