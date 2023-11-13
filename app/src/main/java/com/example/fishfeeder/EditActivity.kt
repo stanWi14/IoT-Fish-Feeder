@@ -1,5 +1,8 @@
 package com.example.fishfeeder
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +31,6 @@ class EditActivity : AppCompatActivity() {
     var sunArray = mutableListOf<String>()
     lateinit var devId: String
     lateinit var devTitle: String
-    var devANotifVal: Boolean = false
     var userStatus: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +40,6 @@ class EditActivity : AppCompatActivity() {
         setContentView(view)
         devId = intent.getStringExtra("DevId").toString()
         devTitle = intent.getStringExtra("DevTitle").toString()
-        devANotifVal = intent.getBooleanExtra("DevAN", false)
         userStatus = intent.getBooleanExtra("UserStat", false)
 
         //TO DO this later we need to read all ( Maybe need )
@@ -57,7 +58,6 @@ class EditActivity : AppCompatActivity() {
         // Set The UI
         binding.txtValDevId.text = devId
         binding.etValDevTitle.setText(devTitle)
-        binding.switchWarningNotif.isChecked = devANotifVal
         if (userStatus) {
             binding.btnAddSchedule.visibility = View.VISIBLE
             binding.layoutAdvanceSet.visibility = View.VISIBLE
@@ -83,8 +83,10 @@ class EditActivity : AppCompatActivity() {
 
             }
         }
-//        binding.sl
-
+        binding.btnUpdate.setOnClickListener() {
+            val intent = Intent(this, Kosongan::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun addScheduleDialog(devId: String) {
@@ -128,6 +130,7 @@ class EditActivity : AppCompatActivity() {
                         "Saturday" -> satArray.add(combinedString)
                         "Sunday" -> sunArray.add(combinedString)
                     }
+                    addToSharedPreferences(this)
                     // Fetch the existing array from Firestore
                     db.collection("Schedules")
                         .document(devId)
@@ -185,6 +188,7 @@ class EditActivity : AppCompatActivity() {
                         friArray = document.get("Friday") as MutableList<String>
                         satArray = document.get("Saturday") as MutableList<String>
                         sunArray = document.get("Sunday") as MutableList<String>
+                        addToSharedPreferences(this)
                         showAllSchedule()
                     } else {
                         // Handle the case where the document with the specified ID doesn't exist
@@ -194,6 +198,62 @@ class EditActivity : AppCompatActivity() {
 //                    binding.txtListSchedule.setText("Failed to read data: ${task.exception?.message}")
                 }
             }
+    }
+
+    private fun saveToSharedPreferences(context: Context) {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        // Save schedule data for each day
+        editor.putStringSet("Monday", HashSet(monArray))
+        editor.putStringSet("Tuesday", HashSet(tueArray))
+        editor.putStringSet("Wednesday", HashSet(wedArray))
+        editor.putStringSet("Thursday", HashSet(thuArray))
+        editor.putStringSet("Friday", HashSet(friArray))
+        editor.putStringSet("Saturday", HashSet(satArray))
+        editor.putStringSet("Sunday", HashSet(sunArray))
+
+        editor.apply()
+    }
+
+    private fun addToSharedPreferences(context: Context) {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        // Retrieve existing data
+        val existingMondaySet = sharedPreferences.getStringSet("Monday", HashSet())?.toMutableSet()
+        val existingTuesdaySet =
+            sharedPreferences.getStringSet("Tuesday", HashSet())?.toMutableSet()
+        val existingWednesdaySet =
+            sharedPreferences.getStringSet("Wednesday", HashSet())?.toMutableSet()
+        val existingThursdaySet =
+            sharedPreferences.getStringSet("Thursday", HashSet())?.toMutableSet()
+        val existingFridaySet = sharedPreferences.getStringSet("Friday", HashSet())?.toMutableSet()
+        val existingSaturdaySet =
+            sharedPreferences.getStringSet("Saturday", HashSet())?.toMutableSet()
+        val existingSundaySet = sharedPreferences.getStringSet("Sunday", HashSet())?.toMutableSet()
+
+        // Add new data to existing data
+        existingMondaySet?.addAll(monArray)
+        existingTuesdaySet?.addAll(tueArray)
+        existingWednesdaySet?.addAll(wedArray)
+        existingThursdaySet?.addAll(thuArray)
+        existingFridaySet?.addAll(friArray)
+        existingSaturdaySet?.addAll(satArray)
+        existingSundaySet?.addAll(sunArray)
+
+        // Save the updated data
+        editor.putStringSet("Monday", existingMondaySet)
+        editor.putStringSet("Tuesday", existingTuesdaySet)
+        editor.putStringSet("Wednesday", existingWednesdaySet)
+        editor.putStringSet("Thursday", existingThursdaySet)
+        editor.putStringSet("Friday", existingFridaySet)
+        editor.putStringSet("Saturday", existingSaturdaySet)
+        editor.putStringSet("Sunday", existingSundaySet)
+
+        editor.apply()
     }
 
 
@@ -224,8 +284,4 @@ class EditActivity : AppCompatActivity() {
         recyclerView.adapter = mergedAdapter
     }
 
-    fun deleteSchedule() {
-        // remove an array value by button & recyclerview ?
-        // duno how to implement rn
-    }
 }

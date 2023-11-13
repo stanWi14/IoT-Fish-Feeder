@@ -10,7 +10,7 @@ data class Device(
     var beforeFeedVol: Double?,
     var afterFeedVol: Double?,
     var lastFeedTimeStamp: String,
-    var allowNotif: Boolean,
+    var allowNotif: Boolean, //remove this later , no use in device, add it on user setting
     var isOwner: Boolean
 ) {
     @PrimaryKey(autoGenerate = true)
