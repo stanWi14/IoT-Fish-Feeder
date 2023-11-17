@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val currentUser = FirebaseAuth.getInstance().currentUser?.uid
-
-
         //Device list part
         val recyclerView: RecyclerView = binding.rvListDevice
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -49,7 +47,9 @@ class MainActivity : AppCompatActivity() {
             devAdapter.setDevice(devices)
         })
 
-        binding.txtSubTitle.setOnClickListener() {
+        binding.btnUserAcc.setOnClickListener() {
+            val intent = Intent(this, UserActivity::class.java)
+            startActivity(intent)
         }
 
         binding.btnAddDevice.setOnClickListener() {
@@ -105,10 +105,12 @@ class MainActivity : AppCompatActivity() {
         dialogViewBinding.btnOwner.setOnClickListener {
             val intent = Intent(this, PairingActivity::class.java)
             startActivity(intent)
+            alertDialog.dismiss()
         }
         dialogViewBinding.btnViewer.setOnClickListener {
             val intent = Intent(this, SubscribeActivity::class.java)
             startActivity(intent)
+            alertDialog.dismiss()
         }
 
         alertDialog.show()

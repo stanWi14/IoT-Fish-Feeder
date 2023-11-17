@@ -6,27 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/txtTitle"
+    <Button
+        android:id="@+id/btnUserAcc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:text="Fish feeder App"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/circular_shape"
+    app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/txtSubTitle"
+    <ImageView
+        android:id="@+id/imgFishLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome @userName"
-        android:textSize="20sp"
+        app:srcCompat="@drawable/logo_fish_auto_feeder_mid"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/btnUserAcc" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvListDevice"
@@ -36,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSubTitle"
+        app:layout_constraintTop_toBottomOf="@+id/imgFishLogo"
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
