@@ -19,10 +19,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.fishfeeder.databinding.ActivityPairingBinding
+import com.example.fishfeeder.databinding.DialogDevTitleBinding
 import com.example.fishfeeder.databinding.DialogNewWifiCredentialBinding
+import com.example.fishfeeder.model.Device
 import com.example.fishfeeder.model.DeviceApplication
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 
@@ -33,6 +38,7 @@ class PairingActivity : AppCompatActivity() {
         private const val devSSID = "FishFeeder"
         private const val devPass = "12345678"
     }
+
     lateinit var binding: ActivityPairingBinding
     lateinit var deviceViewModel: DeviceViewModel
     private lateinit var connectivityManager: ConnectivityManager
@@ -47,6 +53,7 @@ class PairingActivity : AppCompatActivity() {
         binding = ActivityPairingBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        val currentUser = FirebaseAuth.getInstance().currentUser?.uid
 
         // this is only for dummy data testing before fucntion developed
         deviceViewModel = ViewModelProvider(
@@ -55,13 +62,13 @@ class PairingActivity : AppCompatActivity() {
         ).get(DeviceViewModel::class.java)
 
         binding.btnConnect.setOnClickListener() {
-            if(!isConnectedWifi("FishFeeder")){
+            if (!isConnectedWifi("FishFeeder")) {
                 openWifiSettings()
             }
         }
 
         binding.btnPair.setOnClickListener() {
-            assignWifiToEsp("Stanley123")
+            assignWifiToEsp(currentUser.toString())
         }
         connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -76,33 +83,64 @@ class PairingActivity : AppCompatActivity() {
         registerReceiver(wifiScanReceiver, intentFilter)
     }
 
-    private inner class SendDataToESP32 : AsyncTask<String, Void, Void>() {
-        override fun doInBackground(vararg params: String): Void? {
+    private inner class SendDataToESP32 : AsyncTask<String, Void, String?>() {
+        override fun doInBackground(vararg params: String): String? {
             val message = params[0]
             try {
                 val esp32IP = "192.168.4.1"
                 val esp32Port = 80
 
-                val socket = Socket(esp32IP, esp32Port)
-                val out = PrintWriter(socket.getOutputStream(), true)
+                Socket(esp32IP, esp32Port).use { socket ->
+                    PrintWriter(socket.getOutputStream(), true).use { out ->
+                        // Send the message to the ESP32
+                        out.print(message)
+                        out.flush()
 
-                out.print(message)
-                out.flush()
-                out.close()
-                socket.close()
-
+                        // Read the response from the ESP32
+                        BufferedReader(InputStreamReader(socket.getInputStream())).use { reader ->
+                            return reader.readLine()
+                        }
+                    }
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
+                return null
             }
-            return null
         }
 
-        override fun onPostExecute(result: Void?) {
+        override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
+
+            // Process the response as needed
+            if (result != null) {
+                Toast.makeText(
+                    this@PairingActivity,
+                    "Received response from ESP32: $result",
+                    Toast.LENGTH_SHORT
+                ).show()
+                closeDialog()
+                showTextEditorDialog(result)
+                // Additional processing based on the response
+            } else {
+                // Handle the case where no response is received
+                Toast.makeText(
+                    this@PairingActivity,
+                    "No response received from ESP32",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            closeDialog()
             // Show success dialog after sending data
+            // You may add additional logic or UI updates here if needed
+        }
+
+        override fun onCancelled() {
+            super.onCancelled()
+            // Handle the case where the AsyncTask is canceled
+            Toast.makeText(this@PairingActivity, "AsyncTask canceled", Toast.LENGTH_SHORT).show()
+            closeDialog()
         }
     }
-
 
     fun isWifiConnectedToSSID(context: Context, targetSSID: String): Boolean {
         val connectivityManager =
@@ -147,8 +185,8 @@ class PairingActivity : AppCompatActivity() {
         val alertDialog = dialogBuilder.create()
 
         dialogViewBinding.btnSubmit.setOnClickListener {
-            val handler = Handler()
-            var tryCount = 0
+//            val handler = Handler()
+//            var tryCount = 0
             val newSSID = dialogViewBinding.etNewSSID.text.toString()
             val newPass = dialogViewBinding.etNewPass.text.toString()
             val ownerUID = userId
@@ -156,39 +194,88 @@ class PairingActivity : AppCompatActivity() {
             Toast.makeText(this, newPass, Toast.LENGTH_SHORT).show()
             Toast.makeText(this, ownerUID, Toast.LENGTH_SHORT).show()
             val combinedString = "$newSSID#$newPass#$ownerUID"
-            SendDataToESP32().execute(combinedString)
-            alertDialog.dismiss()
             showDialog("Connecting")
-            val runnable = object : Runnable {
+            val sendDataToESP32 = SendDataToESP32()
+            sendDataToESP32.execute(combinedString)
+            val handler = Handler()
+            val checkResponse = object : Runnable {
                 override fun run() {
-                    val isConnected = isConnectedWifi("FishFeeder")
-
-                    if (isConnected) {
-                        if (tryCount < 4) {
-                            tryCount++
-                            handler.postDelayed(this, 1000) // Retry after 1 second
-                        } else {
-                            closeDialog()
-                            showDialog("Failed to Connect to Inputted Wifi")
-                        }
+                    if (sendDataToESP32.status == AsyncTask.Status.FINISHED) {
+                        // AsyncTask has finished, response is available
+                        handler.removeCallbacks(this)
                     } else {
-                        // Connection failed
-                        closeDialog()
-                        showDialog("Successfullly assigned")
+                        // AsyncTask is still running, check again after a delay
+                        handler.postDelayed(this, 1000) // Retry after 1 second
                     }
                 }
             }
 
+            // Start the initial check
+            handler.postDelayed(checkResponse, 1000)
+//            val runnable = object : Runnable {
+//                override fun run() {
+//                    val isConnected = isConnectedWifi("FishFeeder")
+//
+//                    if (isConnected) {
+//                        if (tryCount < 4) {
+//                            tryCount++
+//                            handler.postDelayed(this, 1000) // Retry after 1 second
+//                        } else {
+//                            closeDialog()
+//                            showDialog("Failed to Connect to Inputted Wifi")
+//                        }
+//                    } else {
+//                        // Connection failed
+//                        closeDialog()
+//                        showDialog("Successfullly assigned")
+//                    }
+//                }
+//            }
+
             // Start the initial attempt
-            handler.post(runnable)
+//            handler.post(runnable)
         }
         alertDialog.show()
-
-
     }
 
-    private fun isConnectedWifi(targetSSID:String):Boolean{
-        return if(isWifiConnectedToSSID(this, targetSSID)) {
+    fun addDevice(devID: String, devTitle: String) {
+        val deviceCollection = db.collection("Devices")
+        deviceCollection.document(devID)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document.exists()) {
+                        val afterFeedVol = document.getDouble("afterFeedVol")
+                        val beforeFeedVol = document.getDouble("beforeFeedVol")
+                        val dev = Device(
+                            devID,
+                            devTitle,
+                            beforeFeedVol,
+                            afterFeedVol,
+                            "not yet feed",
+                            false,
+                            true
+                        )
+                        addDeviceToDatabase(dev)
+                        Toast.makeText(applicationContext, "Device Added", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    Toast.makeText(applicationContext, "Device ID Not Found", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+    }
+
+    private fun addDeviceToDatabase(dev: Device) {
+        deviceViewModel.insert(dev)
+        Toast.makeText(applicationContext, "Device Added", Toast.LENGTH_SHORT).show()
+        finish() // Close the activity after adding the device
+    }
+
+    private fun isConnectedWifi(targetSSID: String): Boolean {
+        return if (isWifiConnectedToSSID(this, targetSSID)) {
             // Your device is connected to Wi-Fi with the specified SSID
             Toast.makeText(this, "Connected to FishFeeder Wi-Fi", Toast.LENGTH_SHORT).show()
             true
@@ -211,6 +298,27 @@ class PairingActivity : AppCompatActivity() {
         dialog = dialogBuilder.create()
         dialog!!.show()
     }
+
+    private fun showTextEditorDialog(devID: String) {
+        val dialogViewBinding = DialogDevTitleBinding.inflate(LayoutInflater.from(this))
+        val dialogView = dialogViewBinding.root
+
+        val dialogBuilder = AlertDialog.Builder(this)
+            .setView(dialogView)
+
+        val alertDialog = dialogBuilder.create()
+
+        dialogViewBinding.btnSubmit.setOnClickListener {
+            // Handle the submission of text editor content
+            val devTitle = dialogViewBinding.etTitle.text.toString()
+            addDevice(devID, devTitle)
+            // Close the dialog
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
+    }
+
     private fun closeDialog() {
         // This function will dismiss the currently displayed dialog
         if (dialog != null && dialog!!.isShowing) {

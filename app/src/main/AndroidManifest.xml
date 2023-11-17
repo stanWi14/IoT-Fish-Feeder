@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:name=".model.DeviceApplication"
@@ -19,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FishFeeder"
         tools:targetApi="31">
+        <activity
+            android:name=".UserActivity"
+            android:exported="false" />
         <activity
             android:name=".Kosongan"
             android:exported="false" />

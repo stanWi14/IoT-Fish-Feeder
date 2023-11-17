@@ -3,25 +3,31 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:padding="10dp"
+    android:gravity="center">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Add device as"
+        android:text="Add Device As"
         android:textSize="30dp"/>
 
     <Button
         android:id="@+id/btnOwner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:layout_marginHorizontal="60dp"
+        android:background="@drawable/rounded_border"
         android:text="Owner" />
 
     <Button
         android:id="@+id/btnViewer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginHorizontal="60dp"
+        android:background="@drawable/rounded_border"
         android:text="Viewer" />
 </LinearLayout>
