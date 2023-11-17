@@ -46,8 +46,6 @@ class SubscribeActivity : AppCompatActivity() {
                     val document = task.result
                     if (document.exists()) {
                         if (devPass == document.getString("devPass")) {
-                            val fbAfterVol = document.getDouble("afterFeedVol")
-                            val fbBeforeVol = document.getDouble("beforeFeedVol")
                             afterFeedVol = document.getDouble("afterFeedVol")
                             beforeFeedVol = document.getDouble("beforeFeedVol")
                             addDevice()

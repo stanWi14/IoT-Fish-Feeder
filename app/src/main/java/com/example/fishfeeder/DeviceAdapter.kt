@@ -18,8 +18,6 @@ class DeviceAdapter(
     class DeviceViewHolder(devView: View) : RecyclerView.ViewHolder(devView) {
         val containerClose: LinearLayout = devView.findViewById(R.id.closeCardBox)
         val smallTextTitle: TextView = devView.findViewById(R.id.txtSmallTitleCard)
-        val smallDrop: ImageView = devView.findViewById(R.id.iconSmallDrop)
-
         val conteinerOpen: LinearLayout = devView.findViewById(R.id.openContainerCard)
         val closeCardBox: LinearLayout = devView.findViewById(R.id.closeCardBox)
         val textTitle: TextView = devView.findViewById(R.id.txtTitleCard)
@@ -52,12 +50,11 @@ class DeviceAdapter(
         holder.btnEditDev.setOnClickListener() {
             val intent = Intent(activity, EditActivity::class.java)
             val devNum = currentDev.devNum // Replace this with your actual data
-//            intent.putExtra("DevNum", devNum.toString())      // later implement this, to read all the data
-            //sementara pake ini dulu parsing 1 by 1
-            intent.putExtra("DevId", currentDev.devID)
-            intent.putExtra("DevTitle", currentDev.titleDev)
-            intent.putExtra("DevAN", currentDev.allowNotif)
-            intent.putExtra("UserStat", currentDev.isOwner)
+            intent.putExtra(
+                "DevNum",
+                devNum.toString()
+            )
+            intent.putExtra("device", currentDev)
             activity.startActivity(intent)
         }
         holder.txtValueFoodVolume.text = currentDev.afterFeedVol.toString()
