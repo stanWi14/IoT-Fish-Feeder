@@ -11,4 +11,10 @@
     <color name="yellow_warning">#ffcc00</color>
     <color name="green_warning">#71ea3b</color>
     <color name="red_warning">#ca1717</color>
+
+// Color pallete
+    <color name="base_blue">#104FB6</color>
+    <color name="base_red">#EE675C</color>
+
+
 </resources>

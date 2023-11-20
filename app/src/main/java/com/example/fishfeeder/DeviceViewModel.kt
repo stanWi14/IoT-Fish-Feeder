@@ -20,6 +20,11 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
         repository.delete(dev)
     }
 
+    fun deleteAllDevices() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllDev()
+        }
+    }
 }
 
 class DeviceViewModelFactory(private var repository: DeviceRepository) : ViewModelProvider.Factory {

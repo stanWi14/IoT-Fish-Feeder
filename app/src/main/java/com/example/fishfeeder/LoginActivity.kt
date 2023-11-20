@@ -22,39 +22,56 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        client = GoogleSignIn.getClient(this, options)
+
+        binding.imageView.setOnClickListener() {
+            val intent = Intent(this, Kosongan::class.java)
+            startActivity(intent)
+        }
+
         binding.btnLogin.setOnClickListener() {
-            val intent = client.signInIntent
-            startActivityForResult(intent,10001)
+            val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            // Clear the previously cached account to ensure the user is prompted to select an account each time
+            GoogleSignIn.getClient(this, options).signOut().addOnCompleteListener {
+                val client = GoogleSignIn.getClient(this, options)
+                val intent = client.signInIntent
+                startActivityForResult(intent, 10001)
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-    if(requestCode == 10001){
-        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-        val account  = task.getResult(ApiException::class.java)
-        val credential = GoogleAuthProvider.getCredential(account.idToken,null)
-        FirebaseAuth.getInstance().signInWithCredential(credential)
-            .addOnCompleteListener{task->
-                if(task.isSuccessful){
-                    loginSuccess()
-                }else{
-                    Toast.makeText(this, task.exception?.message,Toast.LENGTH_SHORT).show()
-                }
+
+        if (requestCode == 10001) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+
+            try {
+                val account = task.getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            loginSuccess()
+                        } else {
+                            Toast.makeText(this, task.exception?.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            } catch (e: ApiException) {
+                // Handle the case where the user cancels the sign-in process or encounters an error
+                Toast.makeText(this, "Sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-    }
+        }
     }
 
     fun loginSuccess() {
-        // shared preference is login true
-        // pindah intent
+        // Set the flag indicating that the app has been opened
         val sharedPreferences = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
+        editor.putBoolean("isFirstRun", false)
         editor.putBoolean("isLoggedIn", true)
         editor.apply()
 

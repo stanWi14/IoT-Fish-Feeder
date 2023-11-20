@@ -16,4 +16,7 @@ interface DeviceDao {
 
     @Query("SELECT * FROM table_device")
     fun getAllDevice(): Flow<List<Device>>
+
+    @Query("DELETE FROM table_device")
+    fun deleteAllDevice()
 }

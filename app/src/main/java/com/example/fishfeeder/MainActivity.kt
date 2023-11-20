@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fishfeeder.databinding.ActivityMainBinding
 import com.example.fishfeeder.databinding.DialogAddDeviceBinding
+import com.example.fishfeeder.databinding.DialogUserProfileBinding
 import com.example.fishfeeder.model.DeviceApplication
 import com.google.firebase.auth.FirebaseAuth
 
@@ -28,13 +30,13 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         isLogin = loginState()
+
         if (!isLogin) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
             return
         }
-        val currentUser = FirebaseAuth.getInstance().currentUser?.uid
         //Device list part
         val recyclerView: RecyclerView = binding.rvListDevice
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -48,52 +50,37 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.btnUserAcc.setOnClickListener() {
-            val intent = Intent(this, UserActivity::class.java)
-            startActivity(intent)
+            showProfileDialog()
         }
 
         binding.btnAddDevice.setOnClickListener() {
-            showCustomDialog()
+            showAddDialog()
         }
     }
 
     fun loginState(): Boolean {
         val sharedPreferences = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("isLoggedIn", false)
+
+        // Check if the app is being opened for the first time or after a fresh installation
+        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
+
+        if (isFirstRun) {
+            // Set the flag to false to indicate that the app has been opened
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("isFirstRun", false)
+            editor.apply()
+
+            // Return false to indicate that the user needs to log in
+            return false
+        }
+
+        // Return the actual login status
+        val isItReallyLogIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        Toast.makeText(this, isItReallyLogIn.toString(), Toast.LENGTH_SHORT).show()
+        return isItReallyLogIn
     }
 
-    fun btnAddisClicked() {
-        // show dialog
-        // move according to choice
-    }
-
-    fun showConnectedDevice() {
-        // read from local storage
-        // show in recyclerview
-    }
-
-    fun logout() {
-        FirebaseAuth.getInstance().signOut()
-        // Clear the login status in SharedPreferences (if you're using it)
-        clearLoginStatus()
-
-        // After signing out, you can redirect the user to the login screen or perform other actions
-        // For example, you can navigate to the login activity.
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish() // Optional: Finish the current activity to prevent going back to the main activity
-    }
-
-    fun clearLoginStatus() {
-        // shared preference is login true
-        // pindah intent
-        val sharedPreferences = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("isLoggedIn", false)
-        editor.apply()
-    }
-
-    private fun showCustomDialog() {
+    private fun showAddDialog() {
         val dialogViewBinding = DialogAddDeviceBinding.inflate(LayoutInflater.from(this))
         val dialogView = dialogViewBinding.root
 
@@ -115,4 +102,40 @@ class MainActivity : AppCompatActivity() {
 
         alertDialog.show()
     }
+
+    private fun showProfileDialog() {
+        val currentUID: String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val dialogViewBinding = DialogUserProfileBinding.inflate(LayoutInflater.from(this))
+        val dialogView = dialogViewBinding.root
+
+        val dialogBuilder = AlertDialog.Builder(this)
+            .setView(dialogView)
+
+        val alertDialog = dialogBuilder.create()
+
+        dialogViewBinding.txtDeviceID.setText("UID: $currentUID")
+        dialogViewBinding.txtEmail.setText("Email: $currentUserEmail")
+
+        dialogViewBinding.btnLogOut.setOnClickListener {
+            clearSharedPreferences("isLoggedIn", "LoginStatus", "MyPrefs", "DevNum", "device")
+            FirebaseAuth.getInstance().signOut()
+            deviceViewModel.deleteAllDevices()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            alertDialog.dismiss()
+            finish()
+        }
+        alertDialog.show()
+    }
+
+    fun clearSharedPreferences(vararg prefs: String) {
+        prefs.forEach { prefName ->
+            val sharedPreferences = getSharedPreferences(prefName, Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.clear()
+            editor.apply()
+        }
+    }
+
 }

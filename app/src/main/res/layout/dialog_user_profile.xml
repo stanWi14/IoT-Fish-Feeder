@@ -7,27 +7,35 @@
     android:padding="10dp">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
-        android:text="Add Device As"
+        android:text="Profile"
         android:textSize="30dp" />
 
-    <Button
-        android:id="@+id/btnOwner"
+    <TextView
+        android:id="@+id/txtDeviceID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="60dp"
-        android:layout_marginVertical="5dp"
-        android:background="@drawable/rounded_border"
-        android:text="Owner" />
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/txtEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="15dp" />
 
     <Button
-        android:id="@+id/btnViewer"
+        android:id="@+id/btnLogOut"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="60dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginHorizontal="40dp"
         android:background="@drawable/rounded_border"
-        android:text="Viewer" />
+        android:text="Log Out" />
 </LinearLayout>

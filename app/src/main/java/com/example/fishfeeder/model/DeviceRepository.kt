@@ -21,8 +21,8 @@ class DeviceRepository(private val devDao: DeviceDao) {
         devDao.delete(dev)
     }
 
-//    @WorkerThread
-//    suspend fun deleteAllDev() {
-//        devDao.deleteAllDevice()
-//    }
+    @WorkerThread
+    suspend fun deleteAllDev() {
+        devDao.deleteAllDevice()
+    }
 }
