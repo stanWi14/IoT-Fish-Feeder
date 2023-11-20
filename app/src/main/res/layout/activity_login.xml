@@ -37,8 +37,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
+        android:padding="10dp"
         android:layout_marginHorizontal="40sp"
-        android:background="@drawable/small_card_border">
+        android:background="@drawable/rounded_border">
 
         <ImageView
             android:id="@+id/imageView2"
