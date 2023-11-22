@@ -1,181 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     tools:context=".EditActivity">
 
-    <TextView
-        android:id="@+id/txtTitle"
+    <ImageView
+        android:id="@+id/imgFishLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Custom Connect"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginVertical="40dp"
+        app:srcCompat="@drawable/logo_fish_auto_feeder_mid" />
 
     <TextView
         android:id="@+id/txtSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit Nama Item"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+        android:text="Edit Activity"
+        android:textSize="30sp" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSubTitle">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="Device ID"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/txtValDevId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="Dev Id Null ??"
+                    android:textSize="20sp" />
+
+                <ImageButton
+                    android:id="@+id/btnCopyDevID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/baseline_content_copy_24" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearDevPass"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="Passcode"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/txtValPass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="Click to see the passcode"
+                    android:textSize="20sp" />
+
+                <ImageButton
+                    android:id="@+id/btnCopyPass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:background="@android:color/transparent"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/baseline_content_copy_24" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/txtDevId"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Dev ID"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/txtValDevId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:text="TextView"
-                android:textSize="20sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtDevTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Dev Title"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:gravity="center_vertical"
+                android:text="Device Title"
                 android:textSize="20sp" />
 
             <EditText
                 android:id="@+id/etValDevTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:hint="Name"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtWarningNotif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Allow Warning Notification"
-                android:textSize="20sp" />
-
-            <Switch
-                android:id="@+id/switchWarningNotif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Feeding Schedule"
-                android:textSize="20sp" />
-
-            <Button
-                android:id="@+id/btnAddSchedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Schedule"
-                android:visibility="gone" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/txtStatusSchedule"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:visibility="gone"
-            android:textSize="15sp" />
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="150dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvSchedule"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            </LinearLayout>
-        </ScrollView>
-
-
-        <LinearLayout
-            android:id="@+id/layoutAdvanceSet"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/txtAdvanceSet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Advance Setting"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/rounded_border"
+                android:hint="Device Title (editable)"
+                android:padding="10dp"
                 android:textSize="20sp" />
-
-            <ImageView
-                android:id="@+id/btnAdvanceSet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/baseline_arrow_drop_down_24" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/advanceContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -183,85 +118,112 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txtWaterMin"
+                    android:id="@+id/txtWarningNotif"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:text="Allow Warning Notification"
+                    android:textSize="20sp" />
+
+                <Switch
+                    android:id="@+id/switchWarningNotif"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="Feeding Schedule"
+                    android:textSize="30dp" />
+
+                <Button
+                    android:id="@+id/btnAddSchedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtStatusSchedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/rounded_border"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvSchedule"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+                </LinearLayout>
+            </ScrollView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
                     android:text="Food Volume"
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/etValWaterMin"
+                    android:id="@+id/etValFoodMin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:hint="Minimal value"
-                    android:inputType="number"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                    android:hint="Minimal Food Value"
+                    android:textSize="20sp"
+                    android:visibility="gone" />
 
                 <TextView
-                    android:id="@+id/txtMinSoil"
+                    android:id="@+id/txtValFoodMin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="Min Water Temperature"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/etValMinSoil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:hint="Minimal value"
-                    android:inputType="number"
+                    android:layout_marginRight="10dp"
                     android:textSize="20sp" />
             </LinearLayout>
 
-            <LinearLayout
+
+            <Button
+                android:id="@+id/btnUpdate"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Save Changes" />
 
-                <TextView
-                    android:id="@+id/txtMaxSoil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="Max Water Temperature"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/etValMaxSoil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:hint="Maximal value"
-                    android:inputType="number"
-                    android:textSize="20sp" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/btnDisconnect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Disconnect from Device" />
         </LinearLayout>
+    </ScrollView>
 
-        <Button
-            android:id="@+id/btnUpdate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Save Changes" />
-
-        <Button
-            android:id="@+id/btnDisconnect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Disconnect from Device" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

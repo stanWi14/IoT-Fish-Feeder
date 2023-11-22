@@ -17,6 +17,7 @@ class SubscribeActivity : AppCompatActivity() {
     lateinit var devPass: String
     var beforeFeedVol: Double? = -1.0
     var afterFeedVol: Double? = -1.0
+    var minFoodVol:Double? = -1.0
     lateinit var deviceViewModel: DeviceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +49,7 @@ class SubscribeActivity : AppCompatActivity() {
                         if (devPass == document.getString("devPass")) {
                             afterFeedVol = document.getDouble("afterFeedVol")
                             beforeFeedVol = document.getDouble("beforeFeedVol")
+                            minFoodVol = document.getDouble("minFoodVol")
                             addDevice()
                             Toast.makeText(applicationContext, "Connected", Toast.LENGTH_LONG)
                                 .show()
@@ -66,7 +68,7 @@ class SubscribeActivity : AppCompatActivity() {
     fun addDevice() {
         val devTitle = binding.etAddDevTitle.text.toString()
         // save device to local storage room
-        val dev = Device(devID, devTitle, beforeFeedVol, afterFeedVol, "not yet feed", false, false)
+        val dev = Device(devID, devTitle, beforeFeedVol, afterFeedVol, "not yet feed", false, false,minFoodVol)
         addDeviceToDatabase(dev)
     }
 

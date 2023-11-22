@@ -210,6 +210,7 @@ class PairingActivity : AppCompatActivity() {
                     if (document.exists()) {
                         val afterFeedVol = document.getDouble("afterFeedVol")
                         val beforeFeedVol = document.getDouble("beforeFeedVol")
+                        val minFoodVol = document.getDouble("minFoodVol")
                         val dev = Device(
                             devID,
                             devTitle,
@@ -217,7 +218,8 @@ class PairingActivity : AppCompatActivity() {
                             afterFeedVol,
                             "not yet feed",
                             false,
-                            true
+                            true,
+                            minFoodVol
                         )
                         addDeviceToDatabase(dev)
                         Toast.makeText(applicationContext, "Device Added", Toast.LENGTH_SHORT)

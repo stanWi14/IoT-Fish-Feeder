@@ -1,8 +1,11 @@
 package com.example.fishfeeder
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -17,11 +20,11 @@ import com.example.fishfeeder.databinding.DialogAddScheduleBinding
 import com.example.fishfeeder.model.Device
 import com.example.fishfeeder.model.DeviceApplication
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.DecimalFormat
 
 class EditActivity : AppCompatActivity() {
     lateinit var binding: ActivityEditBinding
     lateinit var deviceViewModel: DeviceViewModel
-    lateinit var selectedDevice: Device
     val db = FirebaseFirestore.getInstance()
     var monArray = mutableListOf<String>()
     var tueArray = mutableListOf<String>()
@@ -31,7 +34,9 @@ class EditActivity : AppCompatActivity() {
     var satArray = mutableListOf<String>()
     var sunArray = mutableListOf<String>()
     lateinit var devId: String
+    var devPass: String? = null
     lateinit var devTitle: String
+    lateinit var foodVal: String
     var devANotifVal: Boolean = false
     var userStatus: Boolean = false
 
@@ -47,53 +52,127 @@ class EditActivity : AppCompatActivity() {
         devTitle = device.titleDev
         devANotifVal = device.allowNotif
         userStatus = device.isOwner
+        foodVal = DecimalFormat("#").format(device.minFoodVol).toString()
 
         // Initialize deviceViewModel
         val viewModelFactory = DeviceViewModelFactory((application as DeviceApplication).repository)
         deviceViewModel = ViewModelProvider(this, viewModelFactory).get(DeviceViewModel::class.java)
 
         // Set The UI
-        binding.txtValDevId.text = devId
-        binding.etValDevTitle.setText(devTitle)
+        // Set additional UI for device owner
         if (userStatus) {
             binding.btnAddSchedule.visibility = View.VISIBLE
-            binding.layoutAdvanceSet.visibility = View.VISIBLE
-            binding.btnAdvanceSet.setOnClickListener {
-                binding.advanceContainer.visibility =
-                    if (binding.advanceContainer.visibility == View.GONE) {
-                        View.VISIBLE
+            binding.linearDevPass.visibility = View.VISIBLE
+            binding.etValFoodMin.visibility = View.VISIBLE
+            binding.txtValFoodMin.visibility = View.GONE
+            binding.etValFoodMin.setText(foodVal)
+            binding.txtValPass.setOnClickListener() {
+                readDeviceCloud(devId) { devPass ->
+                    // Handle the devPass or null value here
+                    if (devPass != null) {
+                        binding.btnCopyPass.visibility = View.VISIBLE
+                        binding.txtValPass.text = devPass
+                        binding.btnCopyPass.setOnClickListener() {
+                            copyToClipBoard(devPass)
+                            Toast.makeText(this, "Passcode copied to clipboard", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     } else {
-                        View.GONE
+                        // Handle the case where the document doesn't exist or there was an error.
+                        binding.txtValPass.text = "Failed to get passcode"
                     }
+                }
             }
         }
-        readData(devId)
+
+        // Set text and saved preference data
+        binding.txtValDevId.text = devId
+        binding.etValDevTitle.setText(devTitle)
+        binding.txtValFoodMin.text = foodVal
+        binding.switchWarningNotif.isChecked = devANotifVal
+        binding.btnCopyDevID.setOnClickListener() {
+            copyToClipBoard(devId)
+            Toast.makeText(this, "ID copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
+        readScheduleCloud(devId)
+
+
+        // UI button & firestore
         binding.btnAddSchedule.setOnClickListener() {
             addScheduleDialog(devId)
         }
         binding.btnDisconnect.setOnClickListener() {
-            Toast.makeText(this, devNumber.toString(), Toast.LENGTH_SHORT).show()
+            if (userStatus) {
+                Toast.makeText(this, "Firestore delete all of the field", Toast.LENGTH_SHORT).show()
+            }
+
+            //delete device from local storage
             device.devNum = devNumber
+            deleteAllSchedules(this)
             deviceViewModel.delete(device)
             Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
             finish()
         }
         binding.btnUpdate.setOnClickListener() {
             val newTitle = binding.etValDevTitle.text.toString()
-            val updatedDevice = Device(
-                devID = device.devID,
-                titleDev = newTitle,
-                beforeFeedVol = device.beforeFeedVol,
-                afterFeedVol = device.afterFeedVol,
-                lastFeedTimeStamp = device.lastFeedTimeStamp,
-                allowNotif = device.allowNotif,
-                isOwner = device.isOwner
-            )
-            updatedDevice.devNum = devNumber
-            deviceViewModel.update(updatedDevice)
-            Toast.makeText(this, "Updated & Saved", Toast.LENGTH_SHORT).show()
-            finish()
+            var newFoodVol = binding.etValFoodMin.text.toString()
+            val newNotif = binding.switchWarningNotif.isChecked
+
+            if (newTitle.isEmpty()) {
+                // Display a warning toast
+                Toast.makeText(this, "Can't update if empty", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (userStatus && newFoodVol != foodVal) {
+                if (!TextUtils.isDigitsOnly(newFoodVol) || newFoodVol.isEmpty()) {
+                    // Display a Toast message indicating that the input contains non-numeric characters
+                    Toast.makeText(this, "incorrect food volume", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                Toast.makeText(this, "Firestore Updated", Toast.LENGTH_SHORT).show()
+                val updates = hashMapOf<String, Any>(
+                    "minFoodVol" to newFoodVol.toDouble()
+                )
+
+                db.collection("Devices")
+                    .document(devId)
+                    .update(updates)
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            this,
+                            "Error updating Firestore: ${e.message}", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            } else {
+                newFoodVol = foodVal
+            }
+
+            if (newTitle != device.titleDev || newFoodVol != foodVal || newNotif != device.allowNotif) {
+                val updatedDevice = Device(
+                    devID = device.devID,
+                    titleDev = newTitle,
+                    beforeFeedVol = device.beforeFeedVol,
+                    afterFeedVol = device.afterFeedVol,
+                    lastFeedTimeStamp = device.lastFeedTimeStamp,
+                    allowNotif = newNotif,
+                    isOwner = device.isOwner,
+                    minFoodVol = newFoodVol.toDouble()
+                )
+                // update device to local storage
+                updatedDevice.devNum = devNumber
+                deviceViewModel.update(updatedDevice)
+                Toast.makeText(this, "Updated", Toast.LENGTH_SHORT).show()
+                finish()
+            } else {
+                Toast.makeText(this, "No Change Detected", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun copyToClipBoard(text: String) {
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("Text", text)
+        clipboardManager.setPrimaryClip(clipData)
     }
 
     private fun addScheduleDialog(devId: String) {
@@ -179,7 +258,7 @@ class EditActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    fun readData(devId: String) {
+    fun readScheduleCloud(devId: String) {
         // Get data from Firebase
         db.collection("Schedules")
             .document(devId) // Specify the document ID
@@ -203,6 +282,27 @@ class EditActivity : AppCompatActivity() {
                 } else {
                     // Handle errors, e.g., network issues or Firestore security rules violation
 //                    binding.txtListSchedule.setText("Failed to read data: ${task.exception?.message}")
+                }
+            }
+    }
+
+    fun readDeviceCloud(devId: String, callback: (String?) -> Unit) {
+        db.collection("Devices")
+            .document(devId)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document.exists()) {
+                        val devPass = document.getString("devPass").toString()
+                        callback(devPass)
+                    } else {
+                        // If the document doesn't exist, you can handle it accordingly.
+                        callback(null)
+                    }
+                } else {
+                    // If the task is not successful, you can handle it accordingly.
+                    callback(null)
                 }
             }
     }

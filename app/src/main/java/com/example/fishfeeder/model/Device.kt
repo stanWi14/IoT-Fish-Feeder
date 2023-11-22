@@ -13,7 +13,8 @@ data class Device(
     var afterFeedVol: Double?,
     var lastFeedTimeStamp: String,
     var allowNotif: Boolean, // remove this later, not used in the device; add it to user settings
-    var isOwner: Boolean
+    var isOwner: Boolean,
+    var minFoodVol :Double?
 ) : Parcelable {
 
     @PrimaryKey(autoGenerate = true)
@@ -26,8 +27,9 @@ data class Device(
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readString()!!,
         parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte()
-    )
+        parcel.readByte() != 0.toByte(),
+        parcel.readValue(Double::class.java.classLoader) as? Double
+        )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(devID)
@@ -37,6 +39,7 @@ data class Device(
         parcel.writeString(lastFeedTimeStamp)
         parcel.writeByte(if (allowNotif) 1 else 0)
         parcel.writeByte(if (isOwner) 1 else 0)
+        parcel.writeValue(minFoodVol)
     }
 
     override fun describeContents(): Int {

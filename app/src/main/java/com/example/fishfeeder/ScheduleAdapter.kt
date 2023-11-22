@@ -4,7 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -19,7 +21,7 @@ class ScheduleAdapter(
         val labelDay: TextView = scheduleView.findViewById(R.id.txtDay)
         val labelTime: TextView = scheduleView.findViewById(R.id.txtTime)
         val labelPortion: TextView = scheduleView.findViewById(R.id.txtPortion)
-        val btnDelSchedule: Button = scheduleView.findViewById(R.id.btnDelSchedule)
+        val btnDelSchedule: ImageButton = scheduleView.findViewById(R.id.btnDelSchedule)
     }
 
     override fun onCreateViewHolder(
@@ -42,7 +44,7 @@ class ScheduleAdapter(
 
         holder.labelTime.text = "$hour:$minute"
         holder.labelPortion.text = portion
-        holder.labelDay.text = dayOfWeek
+        holder.labelDay.text = dayOfWeek.substring(0, minOf(3, dayOfWeek.length))
 
         holder.btnDelSchedule.setOnClickListener() {
             deleteSchedule(currentFormat)
@@ -77,9 +79,11 @@ class ScheduleAdapter(
                     // Update the Firestore document with the modified data
                     docRef.update(updatedData).addOnSuccessListener {
                         // The value has been removed successfully
-                        activity.readData(devId)
+                        activity.readScheduleCloud(devId)
+                        Toast.makeText(activity,"Successfully Removed",Toast.LENGTH_SHORT).show()
                     }.addOnFailureListener { e ->
                         // Handle any errors that occurred during the update
+                        Toast.makeText(activity,"Remove Failed",Toast.LENGTH_SHORT).show()
                     }
                 }
             }
