@@ -22,7 +22,8 @@
         android:text="Edit Activity"
         android:textSize="30sp" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/svEdit"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -160,25 +161,20 @@
                 android:textSize="15sp"
                 android:visibility="gone" />
 
-            <ScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_marginHorizontal="10dp"
                 android:background="@drawable/rounded_border"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:scrollbars="vertical">
 
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSchedule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvSchedule"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
-                </LinearLayout>
-            </ScrollView>
+                    android:layout_gravity="center" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -224,6 +220,6 @@
                 android:layout_margin="10dp"
                 android:text="Disconnect from Device" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

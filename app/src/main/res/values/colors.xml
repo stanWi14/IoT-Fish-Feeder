@@ -15,6 +15,9 @@
 // Color pallete
     <color name="base_blue">#104FB6</color>
     <color name="base_red">#EE675C</color>
+    <color name="base_green">#76C5A0</color>
+    <color name="base_yellow">#FFA756</color>
+    <color name="progress_blue">#6694DE</color>
 
 
 </resources>

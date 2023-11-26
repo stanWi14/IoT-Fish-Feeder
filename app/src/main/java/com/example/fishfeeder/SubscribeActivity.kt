@@ -17,7 +17,7 @@ class SubscribeActivity : AppCompatActivity() {
     lateinit var devPass: String
     var beforeFeedVol: Double? = -1.0
     var afterFeedVol: Double? = -1.0
-    var minFoodVol:Double? = -1.0
+    var minFoodVol: Double? = -1.0
     lateinit var deviceViewModel: DeviceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +68,16 @@ class SubscribeActivity : AppCompatActivity() {
     fun addDevice() {
         val devTitle = binding.etAddDevTitle.text.toString()
         // save device to local storage room
-        val dev = Device(devID, devTitle, beforeFeedVol, afterFeedVol, "not yet feed", false, false,minFoodVol)
+        val dev = Device(
+            devID,
+            devTitle,
+            beforeFeedVol,
+            afterFeedVol,
+            "not yet feed",
+            false,
+            false,
+            minFoodVol
+        )
         addDeviceToDatabase(dev)
     }
 

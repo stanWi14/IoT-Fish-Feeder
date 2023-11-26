@@ -9,40 +9,56 @@
     <LinearLayout
         android:id="@+id/closeCardBox"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/small_card_border"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txtSmallTitleCard"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Title"
-            android:textSize="20sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtSmallTitleCard"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Title"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/txtWarningMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textColor="@android:color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
 
 
         <ImageView
             android:id="@+id/iconSmallDrop"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_arrow_drop_down_24" />
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/baseline_expand_more_24" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/openContainerCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:orientation="vertical"
-        >
+        android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/warningContainer"
+            android:id="@+id/openContainerTop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/top_card_border"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/txtTitleCard"
@@ -50,19 +66,19 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Title"
+                android:textColor="@android:color/white"
                 android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/txtFeedLeft"
+            <ImageView
+                android:id="@+id/iconClose"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Feeding Session Left"
-                android:textSize="15sp" />
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_expand_less_24" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/openContainerBottom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/card_border"
@@ -72,7 +88,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
 
             </LinearLayout>
 
@@ -93,33 +108,36 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:backgroundTint="@color/white"
                         android:text="Edit" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Food Volume" />
+                        android:text="Last Time Feeding"
+                        android:textColor="@android:color/white" />
 
                     <TextView
-                        android:id="@+id/txtLastFeedTimeStamp"
+                        android:id="@+id/txtValLastFeedTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="10/22/33 07:10 AM" />
+                        android:textColor="@android:color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Total Feed Today" />
+                        android:text="Last Updated"
+                        android:textColor="@android:color/white" />
 
                     <TextView
-                        android:id="@+id/todayTotalFeed"
+                        android:id="@+id/txtValLastUpdate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="5x" />
+                        android:textColor="@android:color/white" />
                 </LinearLayout>
 
                 <!--VoodVolume-->
@@ -134,8 +152,8 @@
                         android:id="@+id/txtFoodVolume"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Food Volume" />
+                        android:text="Food Volume"
+                        android:textColor="@android:color/white" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -157,6 +175,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="100%"
+                            android:textColor="@android:color/white"
                             android:textSize="18dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="@+id/percentBarFoodVolume"
