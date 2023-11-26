@@ -101,27 +101,32 @@ class DeviceAdapter(
                     val newMinFoodVol = snapshot.getDouble("minFoodVol")
                     val lastFeedTime: String = snapshot.getString("lastFeedTime").toString()
                     if (lastFeedTime != "0") {
-                        val day = lastFeedTime[0].toString().toInt()
-                        val hour = lastFeedTime.substring(1, 3).toInt()
-                        val minute = lastFeedTime.substring(3, 5).toInt()
-
-                        val dayOfWeek = when (day) {
-                            1 -> "Monday"
-                            2 -> "Tuesday"
-                            3 -> "Wednesday"
-                            4 -> "Thursday"
-                            5 -> "Friday"
-                            6 -> "Saturday"
-                            7 -> "Sunday"
-                            else -> "Invalid day number" // Handle invalid day numbers
+                        val month = lastFeedTime.substring(0, 2).toInt()
+                        val date = lastFeedTime.substring(2, 4).toInt()
+                        val hour = lastFeedTime.substring(4, 6).toInt()
+                        val minute = lastFeedTime.substring(6, 8).toInt()
+                        val feedMonth = when (month) {
+                            1 -> "Jan"
+                            2 -> "Feb"
+                            3 -> "Mar"
+                            4 -> "Apr"
+                            5 -> "May"
+                            6 -> "Jun"
+                            7 -> "Jul"
+                            8 -> "Aug"
+                            9 -> "Sep"
+                            10 -> "Oct"
+                            11 -> "Nov"
+                            12 -> "Des"
+                            else -> "Invalid day number"
                         }
-                        holder.txtValueLastFeed.text = "$dayOfWeek $hour:$minute"
+                        holder.txtValueLastFeed.text = "$feedMonth $date, $hour:$minute"
                     } else {
-                        holder.txtValueLastFeed.text = "Have't do any feeding"
+                        holder.txtValueLastFeed.text = "Haven't do any feeding"
                     }
 
                     val calendar = Calendar.getInstance()
-                    val dateFormat = SimpleDateFormat("MMM d, yyyy HH:mm", Locale.getDefault())
+                    val dateFormat = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault())
                     val formattedDateTime = dateFormat.format(calendar.time)
 
                     // Display the result in the TextView
