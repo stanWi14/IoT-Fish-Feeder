@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import java.util.Calendar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +21,7 @@ import com.example.fishfeeder.databinding.DialogAddScheduleBinding
 import com.example.fishfeeder.model.Device
 import com.example.fishfeeder.model.DeviceApplication
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import java.text.DecimalFormat
 
 class EditActivity : AppCompatActivity() {
@@ -39,6 +41,7 @@ class EditActivity : AppCompatActivity() {
     lateinit var foodVal: String
     var devANotifVal: Boolean = false
     var userStatus: Boolean = false
+    private lateinit var notificationHelper: NotificationHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +93,21 @@ class EditActivity : AppCompatActivity() {
         binding.etValDevTitle.setText(devTitle)
         binding.txtValFoodMin.text = foodVal
         binding.switchWarningNotif.isChecked = devANotifVal
+
+        notificationHelper = NotificationHelper(this, devId, devNumber)
+        (application as DeviceApplication).createNotificationChannel(devId)
+
+        // Other existing code...
+
+        binding.switchWarningNotif.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                assignAllSchedules()
+                Toast.makeText(this, "Assigned", Toast.LENGTH_SHORT).show()
+            } else {
+                // When the switch is turned off, cancel all notifications for the current device
+                notificationHelper.cancelAllNotifications()
+            }
+        }
         binding.btnCopyDevID.setOnClickListener() {
             copyToClipBoard(devId)
             Toast.makeText(this, "ID copied to clipboard", Toast.LENGTH_SHORT).show()
@@ -134,15 +152,11 @@ class EditActivity : AppCompatActivity() {
                     "minFoodVol" to newFoodVol.toDouble()
                 )
 
-                db.collection("Devices")
-                    .document(devId)
-                    .update(updates)
-                    .addOnFailureListener { e ->
-                        Toast.makeText(
-                            this,
-                            "Error updating Firestore: ${e.message}", Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                db.collection("Devices").document(devId).update(updates).addOnFailureListener { e ->
+                    Toast.makeText(
+                        this, "Error updating Firestore: ${e.message}", Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
                 newFoodVol = foodVal
             }
@@ -175,12 +189,42 @@ class EditActivity : AppCompatActivity() {
         clipboardManager.setPrimaryClip(clipData)
     }
 
+    fun readScheduleCloud(devId: String) {
+        // Get data from Firebase
+        db.collection("Schedules").document(devId) // Specify the document ID as the device ID
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null && document.exists()) {
+                        monArray = document.get("Monday") as MutableList<String>?
+                            ?: mutableListOf() // Use default value if null
+                        tueArray =
+                            document.get("Tuesday") as MutableList<String>? ?: mutableListOf()
+                        wedArray =
+                            document.get("Wednesday") as MutableList<String>? ?: mutableListOf()
+                        thuArray =
+                            document.get("Thursday") as MutableList<String>? ?: mutableListOf()
+                        friArray = document.get("Friday") as MutableList<String>? ?: mutableListOf()
+                        satArray =
+                            document.get("Saturday") as MutableList<String>? ?: mutableListOf()
+                        sunArray = document.get("Sunday") as MutableList<String>? ?: mutableListOf()
+                        saveToSharedPreferences(this, devId)
+                        showAllSchedule()
+                    } else {
+                        // Handle the case where the document with the specified ID doesn't exist
+                    }
+                } else {
+                    // Handle errors, e.g., network issues or Firestore security rules violation
+                    // binding.txtListSchedule.setText("Failed to read data: ${task.exception?.message}")
+                }
+            }
+    }
+
     private fun addScheduleDialog(devId: String) {
         val dialogViewBinding = DialogAddScheduleBinding.inflate(LayoutInflater.from(this))
         val dialogView = dialogViewBinding.root
 
-        val dialogBuilder = AlertDialog.Builder(this)
-            .setView(dialogView)
+        val dialogBuilder = AlertDialog.Builder(this).setView(dialogView)
 
         val alertDialog = dialogBuilder.create()
 
@@ -202,8 +246,6 @@ class EditActivity : AppCompatActivity() {
                 "Sunday" to dialogViewBinding.cbSun
             )
 
-            val updatedFields = mutableMapOf<String, Any>()
-
             for ((day, checkBox) in dayToFieldMap) {
                 if (checkBox.isChecked) {
                     // Add day to Local Array
@@ -216,95 +258,83 @@ class EditActivity : AppCompatActivity() {
                         "Saturday" -> satArray.add(combinedString)
                         "Sunday" -> sunArray.add(combinedString)
                     }
-                    saveToSharedPreferences(this, devId)
-                    // Fetch the existing array from Firestore
-                    db.collection("Schedules")
-                        .document(devId)
-                        .get()
-                        .addOnSuccessListener { documentSnapshot ->
-                            val existingArray =
-                                documentSnapshot.get(day) as? List<String> ?: emptyList()
-
-                            // Append the new schedule to the existing array
-                            val updatedArray = existingArray.toMutableList()
-                            updatedArray.add(combinedString)
-
-                            // Update the Firestore field with the updated array
-                            val fieldUpdate = mapOf(day to updatedArray)
-
-                            db.collection("Schedules")
-                                .document(devId)
-                                .update(fieldUpdate)
-                                .addOnSuccessListener {
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "$day Added",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Error updating $day: ${e.message}",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                        }
                 }
             }
+
+            // Update the Firestore document with the updated arrays
+            val fieldUpdate = mapOf(
+                "Monday" to monArray,
+                "Tuesday" to tueArray,
+                "Wednesday" to wedArray,
+                "Thursday" to thuArray,
+                "Friday" to friArray,
+                "Saturday" to satArray,
+                "Sunday" to sunArray
+            )
+
+            db.collection("Schedules").document(devId).set(fieldUpdate, SetOptions.merge())
+                .addOnSuccessListener {
+                    Toast.makeText(
+                        applicationContext, "Schedule Added", Toast.LENGTH_SHORT
+                    ).show()
+                }.addOnFailureListener { e ->
+                    Toast.makeText(
+                        applicationContext,
+                        "Error updating schedule: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+            // Check if the switch is true before scheduling the notification
+            if (binding.switchWarningNotif.isChecked) {
+                // Schedule notification
+                for ((day, checkBox) in dayToFieldMap) {
+                    if (checkBox.isChecked) {
+                        notificationHelper.scheduleNotification(
+                            getDayOfWeek(day), combinedString, devId
+                        )
+                    }
+                }
+            }
+
+            saveToSharedPreferences(this, devId)
             alertDialog.dismiss()
             showAllSchedule()
         }
         alertDialog.show()
     }
 
-    fun readScheduleCloud(devId: String) {
-        // Get data from Firebase
-        db.collection("Schedules")
-            .document(devId) // Specify the document ID
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null && document.exists()) {
-                        monArray = document.get("Monday") as MutableList<String>
-                        tueArray = document.get("Tuesday") as MutableList<String>
-                        wedArray = document.get("Wednesday") as MutableList<String>
-                        thuArray = document.get("Thursday") as MutableList<String>
-                        friArray = document.get("Friday") as MutableList<String>
-                        satArray = document.get("Saturday") as MutableList<String>
-                        sunArray = document.get("Sunday") as MutableList<String>
-                        saveToSharedPreferences(this, devId)
-                        showAllSchedule()
-                    } else {
-                        // Handle the case where the document with the specified ID doesn't exist
-                    }
-                } else {
-                    // Handle errors, e.g., network issues or Firestore security rules violation
-//                    binding.txtListSchedule.setText("Failed to read data: ${task.exception?.message}")
-                }
-            }
+
+    private fun getDayOfWeek(day: String): Int {
+        return when (day) {
+            "Monday" -> Calendar.MONDAY
+            "Tuesday" -> Calendar.TUESDAY
+            "Wednesday" -> Calendar.WEDNESDAY
+            "Thursday" -> Calendar.THURSDAY
+            "Friday" -> Calendar.FRIDAY
+            "Saturday" -> Calendar.SATURDAY
+            "Sunday" -> Calendar.SUNDAY
+            else -> Calendar.SUNDAY
+        }
     }
 
+
     fun readDeviceCloud(devId: String, callback: (String?) -> Unit) {
-        db.collection("Devices")
-            .document(devId)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document.exists()) {
-                        val devPass = document.getString("devPass").toString()
-                        callback(devPass)
-                    } else {
-                        // If the document doesn't exist, you can handle it accordingly.
-                        callback(null)
-                    }
+        db.collection("Devices").document(devId).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val document = task.result
+                if (document.exists()) {
+                    val devPass = document.getString("devPass").toString()
+                    callback(devPass)
                 } else {
-                    // If the task is not successful, you can handle it accordingly.
+                    // If the document doesn't exist, you can handle it accordingly.
                     callback(null)
                 }
+            } else {
+                // If the task is not successful, you can handle it accordingly.
+                callback(null)
             }
+        }
     }
 
     private fun saveToSharedPreferences(context: Context, devId: String) {
@@ -353,17 +383,32 @@ class EditActivity : AppCompatActivity() {
         val sunAdapter = ScheduleAdapter(sunArray, this, devId, "Sunday")
 
         val adapters = listOf(
-            monAdapter,
-            tueAdapter,
-            wedAdapter,
-            thuAdapter,
-            friAdapter,
-            satAdapter,
-            sunAdapter
+            monAdapter, tueAdapter, wedAdapter, thuAdapter, friAdapter, satAdapter, sunAdapter
         )
 
         val mergedAdapter = ConcatAdapter(adapters)
         recyclerView.adapter = mergedAdapter
+    }
+
+    private fun assignAllSchedules() {
+        // Loop through the lists and schedule all notifications
+        scheduleAllForDay(Calendar.MONDAY, monArray)
+        scheduleAllForDay(Calendar.TUESDAY, tueArray)
+        scheduleAllForDay(Calendar.WEDNESDAY, wedArray)
+        scheduleAllForDay(Calendar.THURSDAY, thuArray)
+        scheduleAllForDay(Calendar.FRIDAY, friArray)
+        scheduleAllForDay(Calendar.SATURDAY, satArray)
+        scheduleAllForDay(Calendar.SUNDAY, sunArray)
+    }
+
+    private fun scheduleAllForDay(day: Int, scheduleList: List<String>) {
+        // Create a copy of the list to avoid ConcurrentModificationException
+        val scheduleListCopy = ArrayList(scheduleList)
+
+        // Loop through the copied list and schedule notifications
+        for (time in scheduleListCopy) {
+            notificationHelper.scheduleNotification(day, time, devId)
+        }
     }
 
 }

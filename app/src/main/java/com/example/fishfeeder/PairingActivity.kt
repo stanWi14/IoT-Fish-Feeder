@@ -208,25 +208,54 @@ class PairingActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val document = task.result
                     if (document.exists()) {
-                        val afterFeedVol = document.getDouble("afterFeedVol")
-                        val beforeFeedVol = document.getDouble("beforeFeedVol")
-                        val minFoodVol = document.getDouble("minFoodVol")
-                        val dev = Device(
-                            devID,
-                            devTitle,
-                            beforeFeedVol,
-                            afterFeedVol,
-                            "not yet feed",
-                            false,
-                            true,
-                            minFoodVol
+                        // Update the ownerUID field in Firestore
+                        deviceCollection.document(devID)
+                            .update("ownerUID", currentUser)
+                            .addOnSuccessListener {
+                                // Update other fields in the local database if needed
+                                val afterFeedVol = document.getDouble("afterFeedVol")
+                                val beforeFeedVol = document.getDouble("beforeFeedVol")
+                                val minFoodVol = document.getDouble("minFoodVol")
+                                val dev = Device(
+                                    devID,
+                                    devTitle,
+                                    beforeFeedVol,
+                                    afterFeedVol,
+                                    "not yet feed",
+                                    false,
+                                    true,
+                                    minFoodVol
+                                )
+                                addDeviceToDatabase(dev)
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Device Added",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Failed to update ownerUID",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "Device ID Not Found",
+                            Toast.LENGTH_SHORT
                         )
-                        addDeviceToDatabase(dev)
-                        Toast.makeText(applicationContext, "Device Added", Toast.LENGTH_SHORT)
                             .show()
                     }
                 } else {
-                    Toast.makeText(applicationContext, "Device ID Not Found", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        applicationContext,
+                        "Error retrieving device information",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }

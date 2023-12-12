@@ -100,7 +100,7 @@ class DeviceAdapter(
                     val newBeforeFeed = snapshot.getDouble("beforeFeedVol")
                     val newMinFoodVol = snapshot.getDouble("minFoodVol")
                     val lastFeedTime: String = snapshot.getString("lastFeedTime").toString()
-                    if (lastFeedTime != "0") {
+                    if (lastFeedTime != "0" && lastFeedTime != "") {
                         val month = lastFeedTime.substring(0, 2).toInt()
                         val date = lastFeedTime.substring(2, 4).toInt()
                         val hour = lastFeedTime.substring(4, 6).toInt()
