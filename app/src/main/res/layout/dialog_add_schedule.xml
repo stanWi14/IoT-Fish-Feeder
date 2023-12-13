@@ -1,49 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:orientation="vertical"
+    android:padding="30dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Add Schedule"
-        android:textSize="30dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Feeding Time"
-        android:textSize="20dp"/>
+        android:textSize="30sp" />
+
     <TimePicker
         android:id="@+id/timePicker"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_centerHorizontal="true"
-        android:timePickerMode="spinner"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Feeding Portion"
-        android:textSize="20dp"/>
-
-    <EditText
-        android:id="@+id/etFeedPortion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Feeding Portion" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Feeding Day"
-        android:textSize="20dp"/>
+        android:layout_gravity="center"
+        android:timePickerMode="spinner" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -51,58 +26,78 @@
         android:layout_gravity="center"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <CheckBox
-                android:id="@+id/cbMon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Monday" />
+            android:gravity="center"
+            android:text="Feeding Portion: "
+            android:textSize="20sp" />
 
-            <CheckBox
-                android:id="@+id/cbTue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Tuesday" />
-            <CheckBox
-                android:id="@+id/cbWed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Wednesday" />
-            <CheckBox
-                android:id="@+id/cbThu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Thursday" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <CheckBox
-                android:id="@+id/cbFri"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Friday" />
-            <CheckBox
-                android:id="@+id/cbSat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Saturday" />
-            <CheckBox
-                android:id="@+id/cbSun"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Sunday" />
-        </LinearLayout>
+        <EditText
+            android:id="@+id/etFeedPortion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Portion"
+            android:textSize="20sp" />
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/cbMon"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Monday"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/cbTue"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Tuesday"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/cbWed"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Wednesday"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/cbThu"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Thursday"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/cbFri"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Friday"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/cbSat"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Saturday"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/cbSun"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Sunday"
+        android:textSize="20sp" />
+
 
     <Button
         android:id="@+id/btnAddSchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounded_border"
         android:text="Add Device" />
 
 

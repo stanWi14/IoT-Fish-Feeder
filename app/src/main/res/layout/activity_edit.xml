@@ -211,6 +211,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@drawable/rounded_border"
                 android:text="Save Changes" />
 
             <Button
@@ -218,6 +219,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@drawable/rounded_border"
                 android:text="Disconnect from Device" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

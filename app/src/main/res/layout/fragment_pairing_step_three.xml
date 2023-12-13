@@ -5,46 +5,64 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="20dp"
+    android:gravity="center_horizontal"
     tools:context=".view.PairingStepThree">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="35dp"
-        android:text="Third Step" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:textSize="30dp"
-        android:text="Assign WiFi for Device" />
+        android:text="Third Step" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textSize="20dp"
+        android:text="Assign New WiFi to Fish Feeder Device" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25dp"
+        android:textSize="15dp"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"
+        android:text="Select 2.4 GHz WiFi Network and enter password" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
         android:text="Assign WiFi SSID" />
+
     <EditText
         android:id="@+id/edit_text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="New WiFi SSID" />
+        android:background="@drawable/rounded_border"
+        android:hint="New WiFi SSID"
+        android:layout_marginBottom="20dp"
+        android:padding="5dp" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:text="Assign WiFi Password" />
 
     <EditText
         android:id="@+id/edit_text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="New WiFi Password" />
+        android:background="@drawable/rounded_border"
+        android:hint="New WiFi Password"
+        android:layout_marginBottom="20dp"
+        android:padding="5dp"/>
 
     <Button
         android:id="@+id/connect_ssid_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_border"
         android:text="Connect SSID" />
 
 </LinearLayout>

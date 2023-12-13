@@ -7,34 +7,38 @@
     android:layout_height="match_parent"
     android:layout_margin="20dp"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".view.PairingStepFour">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="35dp"
+        android:textSize="30dp"
+        android:layout_marginBottom="30dp"
         android:text="Last Step" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Device Successfully Connected"
-        android:textSize="25dp" />
+        android:text="If the blue LED is off, Congrats! Your device is successfully connected."
+        android:layout_marginBottom="10dp"
+        android:textSize="20dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Device ID: "
-            android:textSize="20dp" />
+            android:hint="Device ID: "
+            android:textSize="15dp" />
         <TextView
             android:id="@+id/txtDeviceID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"/>
+            android:textSize="15dp"/>
     </LinearLayout>
 
     <TextView
@@ -48,12 +52,24 @@
         android:id="@+id/final_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_border"
+        android:padding="5dp"
+        android:layout_marginBottom="20dp"
         android:hint="Input device title here " />
 
     <Button
         android:id="@+id/add_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_border"
+        android:layout_marginBottom="20dp"
         android:text="Finish" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="If the blue LED is blinking, then you need to hold the button until led blink, and reconnect here."
+        android:textSize="15dp" />
 
 </LinearLayout>

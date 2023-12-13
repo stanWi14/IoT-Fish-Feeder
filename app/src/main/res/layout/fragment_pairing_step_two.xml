@@ -1,47 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="20dp"
+    android:gravity="center_horizontal"
     tools:context=".view.PairingStepTwo">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="35dp"
+        android:textSize="30dp"
         android:text="Second Step" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="Connect to Device's Wifi" />
+        android:layout_margin="30dp"
+        android:src="@drawable/wifipairingsmall" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25dp"
-        android:text="Search Device Name FishFeeder" />
+        android:textSize="20dp"
+        android:text="Connect to device's WiFi" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25dp"
-        android:text="Input 12345678 as password" />
+        android:textSize="15dp"
+        android:text="WiFi Name: FishFeeder" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WiFi Password: PairingFishFeeder"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/txtPass"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text=""
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/btnCopyWifiPass"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/baseline_content_copy_24" />
+    </LinearLayout>
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:src="@drawable/baseline_south_24" />
 
     <Button
         android:id="@+id/connect_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect" />
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/rounded_border"
+        android:text="Connect to device's WiFi" />
 
     <Button
         android:id="@+id/next_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Next" />
+        android:background="@drawable/rounded_border"
+        android:text="Next Step" />
 
 </LinearLayout>
