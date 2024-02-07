@@ -21,7 +21,7 @@ class DeviceApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val devId = "default_dev_id" // Replace with the actual devId or use a default value
+            val devId = "default_dev_id"
             createNotificationChannel(devId)
         }
     }

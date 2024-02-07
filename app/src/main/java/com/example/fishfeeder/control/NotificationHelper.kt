@@ -1,4 +1,4 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.control
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.fishfeeder.R
 import java.util.*
 
 class NotificationHelper(

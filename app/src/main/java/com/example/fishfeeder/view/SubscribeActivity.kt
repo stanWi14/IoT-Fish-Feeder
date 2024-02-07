@@ -1,9 +1,11 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.view
 
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.fishfeeder.control.DeviceViewModel
+import com.example.fishfeeder.control.DeviceViewModelFactory
 import com.example.fishfeeder.databinding.ActivitySubscribeBinding
 import com.example.fishfeeder.model.Device
 import com.example.fishfeeder.model.DeviceApplication

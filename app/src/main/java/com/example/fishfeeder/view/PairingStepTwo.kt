@@ -19,7 +19,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.fishfeeder.PairingActivity
 import com.example.fishfeeder.R
 
 class PairingStepTwo : Fragment() {
@@ -46,17 +45,17 @@ class PairingStepTwo : Fragment() {
 
         nextButton.setOnClickListener {
             // Check WiFi connection when the "Next" button is clicked
-            checkWifiConnection()
+//            checkWifiConnection()
             // Check if connected to "FishFeeder" WiFi before proceeding to the next step
-            if (connectedSSID == "FishFeeder") {
+//            if (connectedSSID == "FishFeeder") {
                 (requireActivity() as PairingActivity).loadFragment(PairingStepThree())
-            } else {
-                showToast("Not connected to FishFeeder WiFi")
-            }
+//            } else {
+//                showToast("Not connected to FishFeeder WiFi")
+//            }
         }
 
         copyBtn.setOnClickListener() {
-            copyToClipBoard("PairingFishFeeder")
+            copyToClipBoard("P15HF3ED3rD3V1C3")
             Toast.makeText(requireContext(), "Passcode copied to clipboard", Toast.LENGTH_SHORT)
                 .show()
         }

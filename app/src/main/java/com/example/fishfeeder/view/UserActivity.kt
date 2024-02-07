@@ -1,8 +1,7 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.fishfeeder.databinding.ActivityMainBinding
 import com.example.fishfeeder.databinding.ActivityUserBinding
 import com.google.firebase.auth.FirebaseAuth
 

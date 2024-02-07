@@ -1,10 +1,12 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.control
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.fishfeeder.R
+
 class NotificationReceiver : BroadcastReceiver() {
 
     companion object {
@@ -21,8 +23,8 @@ class NotificationReceiver : BroadcastReceiver() {
     private fun showNotification(context: Context?, devId: String) {
         val notificationManager = NotificationManagerCompat.from(context!!)
         val notification = NotificationCompat.Builder(context, devId)
-            .setContentTitle(devId)  // Set the title to devId
-            .setContentText("This notification was scheduled at a specific time.")
+            .setContentTitle("There is Feeding Schedule")  // Set the title to devId
+            .setContentText("Feeding schedule for $devId")
             .setSmallIcon(R.drawable.logo_fish_auto_feeder_mid)
             .build()
 

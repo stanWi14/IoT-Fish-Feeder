@@ -1,4 +1,4 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.view
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -9,13 +9,15 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import java.util.Calendar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fishfeeder.control.DeviceViewModel
+import com.example.fishfeeder.control.DeviceViewModelFactory
+import com.example.fishfeeder.control.NotificationHelper
 import com.example.fishfeeder.databinding.ActivityEditBinding
 import com.example.fishfeeder.databinding.DialogAddScheduleBinding
 import com.example.fishfeeder.model.Device
@@ -23,6 +25,7 @@ import com.example.fishfeeder.model.DeviceApplication
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import java.text.DecimalFormat
+import java.util.*
 
 class EditActivity : AppCompatActivity() {
     lateinit var binding: ActivityEditBinding
@@ -81,7 +84,6 @@ class EditActivity : AppCompatActivity() {
                                 .show()
                         }
                     } else {
-                        // Handle the case where the document doesn't exist or there was an error.
                         binding.txtValPass.text = "Failed to get passcode"
                     }
                 }
@@ -97,14 +99,12 @@ class EditActivity : AppCompatActivity() {
         notificationHelper = NotificationHelper(this, devId, devNumber)
         (application as DeviceApplication).createNotificationChannel(devId)
 
-        // Other existing code...
 
         binding.switchWarningNotif.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 assignAllSchedules()
                 Toast.makeText(this, "Assigned", Toast.LENGTH_SHORT).show()
             } else {
-                // When the switch is turned off, cancel all notifications for the current device
                 notificationHelper.cancelAllNotifications()
             }
         }
@@ -124,7 +124,6 @@ class EditActivity : AppCompatActivity() {
                 Toast.makeText(this, "Firestore delete all of the field", Toast.LENGTH_SHORT).show()
             }
 
-            //delete device from local storage
             device.devNum = devNumber
             deleteAllSchedules(this)
             deviceViewModel.delete(device)
@@ -137,13 +136,11 @@ class EditActivity : AppCompatActivity() {
             val newNotif = binding.switchWarningNotif.isChecked
 
             if (newTitle.isEmpty()) {
-                // Display a warning toast
                 Toast.makeText(this, "Can't update if empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (userStatus && newFoodVol != foodVal) {
                 if (!TextUtils.isDigitsOnly(newFoodVol) || newFoodVol.isEmpty()) {
-                    // Display a Toast message indicating that the input contains non-numeric characters
                     Toast.makeText(this, "incorrect food volume", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
@@ -190,7 +187,6 @@ class EditActivity : AppCompatActivity() {
     }
 
     fun readScheduleCloud(devId: String) {
-        // Get data from Firebase
         db.collection("Schedules").document(devId) // Specify the document ID as the device ID
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -210,12 +206,7 @@ class EditActivity : AppCompatActivity() {
                         sunArray = document.get("Sunday") as MutableList<String>? ?: mutableListOf()
                         saveToSharedPreferences(this, devId)
                         showAllSchedule()
-                    } else {
-                        // Handle the case where the document with the specified ID doesn't exist
                     }
-                } else {
-                    // Handle errors, e.g., network issues or Firestore security rules violation
-                    // binding.txtListSchedule.setText("Failed to read data: ${task.exception?.message}")
                 }
             }
     }
@@ -229,13 +220,6 @@ class EditActivity : AppCompatActivity() {
         val alertDialog = dialogBuilder.create()
 
         dialogViewBinding.btnAddSchedule.setOnClickListener {
-            val hour = dialogViewBinding.timePicker.currentHour
-            val minute = dialogViewBinding.timePicker.currentMinute
-            val portion = dialogViewBinding.etFeedPortion.text.toString()
-            val combinedString =
-                "${hour.toString().padStart(2, '0')}${minute.toString().padStart(2, '0')}${portion}"
-            Toast.makeText(applicationContext, combinedString, Toast.LENGTH_LONG).show()
-
             val dayToFieldMap = mapOf(
                 "Monday" to dialogViewBinding.cbMon,
                 "Tuesday" to dialogViewBinding.cbTue,
@@ -246,9 +230,52 @@ class EditActivity : AppCompatActivity() {
                 "Sunday" to dialogViewBinding.cbSun
             )
 
+            if (!dayToFieldMap.any { it.value.isChecked }) {
+                Toast.makeText(
+                    applicationContext,
+                    "Please select at least one day.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            val portion = dialogViewBinding.etFeedPortion.text.toString()
+            if (portion.isEmpty()) {
+                Toast.makeText(applicationContext, "Please enter feed portion.", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+
+            val hour = dialogViewBinding.timePicker.currentHour
+            val minute = dialogViewBinding.timePicker.currentMinute
+            if (hour == 0 && minute == 0) {
+                Toast.makeText(
+                    applicationContext,
+                    "Please select a valid time.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            val combinedString =
+                "${hour.toString().padStart(2, '0')}${minute.toString().padStart(2, '0')}${portion}"
+
+
             for ((day, checkBox) in dayToFieldMap) {
                 if (checkBox.isChecked) {
-                    // Add day to Local Array
+                    val combinedString =
+                        "${hour.toString().padStart(2, '0')}${
+                            minute.toString().padStart(2, '0')
+                        }$portion"
+
+                    if (scheduleExists(day, combinedString)) {
+                        Toast.makeText(
+                            applicationContext,
+                            "Schedule already exists for $day.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
                     when (day) {
                         "Monday" -> monArray.add(combinedString)
                         "Tuesday" -> tueArray.add(combinedString)
@@ -261,7 +288,6 @@ class EditActivity : AppCompatActivity() {
                 }
             }
 
-            // Update the Firestore document with the updated arrays
             val fieldUpdate = mapOf(
                 "Monday" to monArray,
                 "Tuesday" to tueArray,
@@ -285,9 +311,7 @@ class EditActivity : AppCompatActivity() {
                     ).show()
                 }
 
-            // Check if the switch is true before scheduling the notification
             if (binding.switchWarningNotif.isChecked) {
-                // Schedule notification
                 for ((day, checkBox) in dayToFieldMap) {
                     if (checkBox.isChecked) {
                         notificationHelper.scheduleNotification(
@@ -302,6 +326,20 @@ class EditActivity : AppCompatActivity() {
             showAllSchedule()
         }
         alertDialog.show()
+    }
+
+    private fun scheduleExists(day: String, newSchedule: String): Boolean {
+        val scheduleList = when (day) {
+            "Monday" -> monArray
+            "Tuesday" -> tueArray
+            "Wednesday" -> wedArray
+            "Thursday" -> thuArray
+            "Friday" -> friArray
+            "Saturday" -> satArray
+            "Sunday" -> sunArray
+            else -> emptyList()
+        }
+        return scheduleList.contains(newSchedule)
     }
 
 
@@ -327,11 +365,9 @@ class EditActivity : AppCompatActivity() {
                     val devPass = document.getString("devPass").toString()
                     callback(devPass)
                 } else {
-                    // If the document doesn't exist, you can handle it accordingly.
                     callback(null)
                 }
             } else {
-                // If the task is not successful, you can handle it accordingly.
                 callback(null)
             }
         }
@@ -341,7 +377,6 @@ class EditActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences(devId, Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        // Save schedule data for each day
         editor.putStringSet("Monday", HashSet(monArray))
         editor.putStringSet("Tuesday", HashSet(tueArray))
         editor.putStringSet("Wednesday", HashSet(wedArray))
@@ -356,8 +391,6 @@ class EditActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-
-        // Remove all schedules for each day
         editor.remove("Monday")
         editor.remove("Tuesday")
         editor.remove("Wednesday")
@@ -365,7 +398,6 @@ class EditActivity : AppCompatActivity() {
         editor.remove("Friday")
         editor.remove("Saturday")
         editor.remove("Sunday")
-
         editor.apply()
     }
 
@@ -373,14 +405,20 @@ class EditActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = binding.rvSchedule
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Assuming you have fetched data into your arrays
-        val monAdapter = ScheduleAdapter(monArray, this, devId, "Monday")
-        val tueAdapter = ScheduleAdapter(tueArray, this, devId, "Tuesday")
-        val wedAdapter = ScheduleAdapter(wedArray, this, devId, "Wednesday")
-        val thuAdapter = ScheduleAdapter(thuArray, this, devId, "Thursday")
-        val friAdapter = ScheduleAdapter(friArray, this, devId, "Friday")
-        val satAdapter = ScheduleAdapter(satArray, this, devId, "Saturday")
-        val sunAdapter = ScheduleAdapter(sunArray, this, devId, "Sunday")
+        val monAdapter =
+            ScheduleAdapter(monArray.sortedBy { it.substring(0, 4) }, this, devId, "Monday")
+        val tueAdapter =
+            ScheduleAdapter(tueArray.sortedBy { it.substring(0, 4) }, this, devId, "Tuesday")
+        val wedAdapter =
+            ScheduleAdapter(wedArray.sortedBy { it.substring(0, 4) }, this, devId, "Wednesday")
+        val thuAdapter =
+            ScheduleAdapter(thuArray.sortedBy { it.substring(0, 4) }, this, devId, "Thursday")
+        val friAdapter =
+            ScheduleAdapter(friArray.sortedBy { it.substring(0, 4) }, this, devId, "Friday")
+        val satAdapter =
+            ScheduleAdapter(satArray.sortedBy { it.substring(0, 4) }, this, devId, "Saturday")
+        val sunAdapter =
+            ScheduleAdapter(sunArray.sortedBy { it.substring(0, 4) }, this, devId, "Sunday")
 
         val adapters = listOf(
             monAdapter, tueAdapter, wedAdapter, thuAdapter, friAdapter, satAdapter, sunAdapter
@@ -391,7 +429,6 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun assignAllSchedules() {
-        // Loop through the lists and schedule all notifications
         scheduleAllForDay(Calendar.MONDAY, monArray)
         scheduleAllForDay(Calendar.TUESDAY, tueArray)
         scheduleAllForDay(Calendar.WEDNESDAY, wedArray)
@@ -402,10 +439,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun scheduleAllForDay(day: Int, scheduleList: List<String>) {
-        // Create a copy of the list to avoid ConcurrentModificationException
         val scheduleListCopy = ArrayList(scheduleList)
-
-        // Loop through the copied list and schedule notifications
         for (time in scheduleListCopy) {
             notificationHelper.scheduleNotification(day, time, devId)
         }

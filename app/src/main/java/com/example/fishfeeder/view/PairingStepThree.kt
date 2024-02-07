@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import com.example.fishfeeder.PairingActivity
 import com.example.fishfeeder.R
 
 class PairingStepThree : Fragment() {
@@ -25,7 +24,6 @@ class PairingStepThree : Fragment() {
             val valueNewSSID = etNewSSID.text.toString()
             val valueNewPass = etNewPass.text.toString()
             assignWifiToEsp(valueNewSSID, valueNewPass)
-            (requireActivity() as PairingActivity).loadFragment(PairingStepFour())
         }
         return view
     }

@@ -1,14 +1,20 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.view
 
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fishfeeder.R
+import com.example.fishfeeder.control.DeviceViewModel
+import com.example.fishfeeder.control.DeviceViewModelFactory
 import com.example.fishfeeder.model.Device
 import com.example.fishfeeder.model.DeviceApplication
 import com.google.firebase.firestore.FirebaseFirestore
@@ -42,6 +48,7 @@ class DeviceAdapter(
             containerBottomOpen.background as GradientDrawable
         val drawableContainerClose: GradientDrawable = containerClose.background as GradientDrawable
         var listenerRegistration: ListenerRegistration? = null
+        val warnText: TextView = devView.findViewById(R.id.txtWarningMsg)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
@@ -67,11 +74,13 @@ class DeviceAdapter(
             if (foodVol != null) {
                 if (foodVol <= 0.0) {
                     setColor(redWarning)
+                    holder.warnText.setText("Food Feeder empty! Please refill")
                 } else if (foodVol > 0 && foodVol < foodMin!!) {
                     setColor(yellowWarning)
-
+                    holder.warnText.setText("Food volume is less than minimal value")
                 } else {
                     setColor(greenSafe)
+                    holder.warnText.setText("Food volume is within safe limits")
                 }
             }
         }
@@ -105,6 +114,12 @@ class DeviceAdapter(
                         val date = lastFeedTime.substring(2, 4).toInt()
                         val hour = lastFeedTime.substring(4, 6).toInt()
                         val minute = lastFeedTime.substring(6, 8).toInt()
+                        val formattedHour =
+                            String.format("%02d", hour) // Format hour with leading zero if needed
+                        val formattedMinute = String.format(
+                            "%02d",
+                            minute
+                        ) // Format minute with leading zero if needed
                         val feedMonth = when (month) {
                             1 -> "Jan"
                             2 -> "Feb"
@@ -120,10 +135,12 @@ class DeviceAdapter(
                             12 -> "Des"
                             else -> "Invalid day number"
                         }
-                        holder.txtValueLastFeed.text = "$feedMonth $date, $hour:$minute"
+                        holder.txtValueLastFeed.text =
+                            "$feedMonth $date, $formattedHour:$formattedMinute"
                     } else {
-                        holder.txtValueLastFeed.text = "Haven't do any feeding"
+                        holder.txtValueLastFeed.text = "Haven't done any feeding"
                     }
+
 
                     val calendar = Calendar.getInstance()
                     val dateFormat = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault())
@@ -135,7 +152,12 @@ class DeviceAdapter(
                     if (newAfterFeed != null && newBeforeFeed != null &&
                         (newAfterFeed != currentDev.afterFeedVol || newBeforeFeed != currentDev.beforeFeedVol || newMinFoodVol != currentDev.minFoodVol)
                     ) {
-                        Toast.makeText(activity, "there is a change", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(activity, "there is a change", Toast.LENGTH_SHORT).show()
+//                        val calendar = Calendar.getInstance()
+//                        val dateFormat = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault())
+//                        val formattedDateTime = dateFormat.format(calendar.time)
+//                        // Display the result in the TextView
+//                        holder.txtValLastUpdate.text = "$formattedDateTime"
                         if (newMinFoodVol != null) {
                             updateWarning(newAfterFeed, newMinFoodVol)
                         }
@@ -151,7 +173,7 @@ class DeviceAdapter(
                         )
                         updatedDevice.devNum = currentDev.devNum
                         deviceViewModel.update(updatedDevice)
-                        Toast.makeText(activity, "Updated", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(activity, "Updated", Toast.LENGTH_SHORT).show()
                         // Update cached values
                         currentDev.afterFeedVol = newAfterFeed
                         currentDev.beforeFeedVol = newBeforeFeed

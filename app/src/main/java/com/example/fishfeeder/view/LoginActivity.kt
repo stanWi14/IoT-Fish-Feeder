@@ -1,10 +1,12 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.view
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.fishfeeder.Kosongan
+import com.example.fishfeeder.R
 import com.example.fishfeeder.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,11 +24,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        binding.imageView.setOnClickListener() {
-            val intent = Intent(this, Kosongan::class.java)
-            startActivity(intent)
-        }
 
         binding.btnLogin.setOnClickListener() {
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

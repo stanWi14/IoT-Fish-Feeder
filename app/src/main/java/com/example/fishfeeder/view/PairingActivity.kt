@@ -1,4 +1,4 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.view
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -18,11 +18,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import com.example.fishfeeder.control.DeviceViewModel
+import com.example.fishfeeder.control.DeviceViewModelFactory
+import com.example.fishfeeder.R
 import com.example.fishfeeder.databinding.ActivityPairingBinding
 import com.example.fishfeeder.model.Device
 import com.example.fishfeeder.model.DeviceApplication
-import com.example.fishfeeder.view.PairingStepFour
-import com.example.fishfeeder.view.PairingStepOne
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.BufferedReader
@@ -191,16 +192,16 @@ class PairingActivity : AppCompatActivity() {
 
     fun assignWifiToEsp(newSSID: String, newPass: String) {
         val ownerUID = currentUser
-        Toast.makeText(this, newSSID, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, newPass, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, ownerUID, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, newSSID, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, newPass, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, ownerUID, Toast.LENGTH_SHORT).show()
         val combinedString = "$newSSID#$newPass#$ownerUID"
         showDialog("Sending Data")
         val sendDataToESP32 = SendDataToESP32()
         sendDataToESP32.execute(combinedString)
     }
 
-    fun addDevice(devID: String, devTitle: String) {
+    fun addDevice(devID: String, devTitle: String, devPassCode:String) {
         val deviceCollection = db.collection("Devices")
         deviceCollection.document(devID)
             .get()
@@ -210,8 +211,10 @@ class PairingActivity : AppCompatActivity() {
                     if (document.exists()) {
                         // Update the ownerUID field in Firestore
                         deviceCollection.document(devID)
-                            .update("ownerUID", currentUser)
-                            .addOnSuccessListener {
+                            .update(mapOf(
+                                "ownerUID" to currentUser,
+                                "devPass" to devPassCode
+                            ))                            .addOnSuccessListener {
                                 // Update other fields in the local database if needed
                                 val afterFeedVol = document.getDouble("afterFeedVol")
                                 val beforeFeedVol = document.getDouble("beforeFeedVol")
@@ -284,10 +287,6 @@ class PairingActivity : AppCompatActivity() {
         dialogBuilder.setTitle("Fish Feeder")
         dialogBuilder.setMessage(message)
         dialogBuilder.setCancelable(false)
-        dialogBuilder.setPositiveButton("OK") { _, _ ->
-            // Do nothing, just dismiss the dialog
-            closeDialog()
-        }
         dialog = dialogBuilder.create()
         dialog!!.show()
     }

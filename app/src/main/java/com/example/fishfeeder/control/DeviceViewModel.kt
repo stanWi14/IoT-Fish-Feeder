@@ -1,4 +1,4 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.control
 
 import androidx.lifecycle.*
 import com.example.fishfeeder.model.Device

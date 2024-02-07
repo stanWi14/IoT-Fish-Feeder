@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:textSize="20dp"
-        android:text="Assign New WiFi to Fish Feeder Device" />
+        android:text="Assign WiFi to Fish Feeder Device" />
 
     <TextView
         android:layout_width="wrap_content"

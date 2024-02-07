@@ -1,13 +1,13 @@
-package com.example.fishfeeder
+package com.example.fishfeeder.view
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fishfeeder.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ScheduleAdapter(
@@ -27,10 +27,10 @@ class ScheduleAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ScheduleAdapter.ScheduleViewHolder {
+    ): ScheduleViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_schedule_card, parent, false)
-        return ScheduleAdapter.ScheduleViewHolder(view)
+        return ScheduleViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
@@ -41,8 +41,9 @@ class ScheduleAdapter(
         val hour = currentFormat.substring(0, 2).toInt()
         val minute = if (currentFormat.length >= 4) currentFormat.substring(2, 4).toInt() else 0
         val portion = if (currentFormat.length > 4) currentFormat.substring(4) else ""
-
-        holder.labelTime.text = "$hour:$minute"
+        val formattedHour = String.format("%02d", hour) // Format hour with leading zero if needed
+        val formattedMinute = String.format("%02d", minute) // Format minute with leading zero if needed
+        holder.labelTime.text = "$formattedHour:$formattedMinute"
         holder.labelPortion.text = portion
         holder.labelDay.text = dayOfWeek.substring(0, minOf(3, dayOfWeek.length))
 

@@ -42,7 +42,6 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
@@ -54,8 +53,22 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_border"
         android:padding="5dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:hint="Input device title here " />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Set Up Device Passcode" />
+
+    <EditText
+        android:id="@+id/etSetPasscode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_border"
+        android:padding="5dp"
+        android:layout_marginBottom="20dp"
+        android:hint="Input device passcode " />
 
     <Button
         android:id="@+id/add_button"

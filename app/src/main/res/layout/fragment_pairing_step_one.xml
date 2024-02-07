@@ -106,6 +106,12 @@
         </LinearLayout>
     </LinearLayout>
 
+    <CheckBox
+        android:id="@+id/cbBlinking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm the LED is Blinking" />
+
     <Button
         android:id="@+id/next_button"
         android:layout_width="match_parent"

@@ -6,7 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Kosongan">
-
+    <TextView
+        android:id="@+id/txtID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="TextView" />
     <TextView
         android:id="@+id/txtFeed"
         android:layout_width="match_parent"

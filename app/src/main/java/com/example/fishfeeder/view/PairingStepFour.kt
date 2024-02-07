@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.fishfeeder.PairingActivity
 import com.example.fishfeeder.R
 
 class PairingStepFour : Fragment() {
     lateinit var etTitle: EditText
     lateinit var addButton: Button
     lateinit var txtDevID: TextView
+    lateinit var etPassCode: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,22 +26,45 @@ class PairingStepFour : Fragment() {
         etTitle = view.findViewById(R.id.final_edit_text)
         addButton = view.findViewById(R.id.add_button)
         txtDevID = view.findViewById(R.id.txtDeviceID)
+        etPassCode = view.findViewById(R.id.etSetPasscode)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        var isButtonClicked = false
         val devID = arguments?.getString("readDeviceID")
-        txtDevID.setText(devID.toString())
+        txtDevID.text = devID.toString()
+
         addButton.setOnClickListener {
-            val devTitle = etTitle.text.toString()
-            addDevice(devID.toString(), devTitle)
+            if (!isButtonClicked) {
+                val devTitle = etTitle.text.toString()
+                val devPassCode = etPassCode.text.toString()
+
+                if (devTitle.isEmpty() || devPassCode.isEmpty()) {
+                    if (devTitle.isEmpty()) {
+                        showToast("Title cannot be empty")
+                    }
+                    if (devPassCode.isEmpty()) {
+                        showToast("Passcode cannot be empty")
+                    }
+                } else {
+                    addDevice(devID.toString(), devTitle, devPassCode)
+                }
+                isButtonClicked = true
+                addButton.postDelayed({
+                    isButtonClicked = false
+                }, 10000)
+            }
         }
     }
 
-    fun addDevice(devID: String, devTitle: String) {
-        (requireActivity() as PairingActivity).addDevice(devID, devTitle)
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun addDevice(devID: String, devTitle: String, devPass: String) {
+        (requireActivity() as PairingActivity).addDevice(devID, devTitle, devPass)
     }
 
 }
